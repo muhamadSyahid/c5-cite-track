@@ -13,4 +13,21 @@
 #ifndef DLLIST_H
 #define DLLIST_H
 
+/// Node untuk Double Linked List
+typedef struct DLListNode DLListNode;
+struct DLListNode
+{
+  void *info; // pointer ke data generik
+  DLListNode *next;
+  DLListNode *prev;
+};
+
+/// Double Linked List
+typedef struct
+{
+  DLListNode *head;
+  DLListNode *tail;
+  int size;
+} DLList;
+
 #endif

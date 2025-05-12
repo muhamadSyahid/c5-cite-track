@@ -18,4 +18,34 @@
 #include "BSTree/BSTree.h"
 #include "DLList/DLList.h"
 
+/// Struct untuk menyimpan data Paper
+typedef struct
+{
+  char *id;             // id paper
+  char *title;          // judul paper
+  char *paper_abstract; // abstrak paper
+
+  char **in_citations;  // array id sitasi
+  char **out_citations; // array id sitasi
+
+  int in_citation_count;  // jumlah sitasi masuk
+  int out_citation_count; // jumlah sitasi keluar
+
+  int year;      // tahun
+  char **author; // nama nama author
+} Paper;
+
+/// Struct untuk menyimpan data Author di dalam BSTree
+typedef struct
+{
+  char *name;     // nama author
+  DLList *papers; // list Paper
+} Author;
+
+/**
+ * BSTree untuk menyimpan data Author
+ * @note Penyimpanan data utama
+ */
+extern BSTree *authors_tree;
+
 #endif

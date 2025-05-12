@@ -13,4 +13,20 @@
 #ifndef BSTREE_H
 #define BSTREE_H
 
+/// Node untuk Binary Search Tree
+typedef struct BSTreeNode BSTreeNode;
+struct BSTreeNode
+{
+  void *info; // pointer ke data generik
+  BSTreeNode *left;
+  BSTreeNode *right;
+};
+
+/// Binary Search Tree
+typedef struct
+{
+  BSTreeNode *root;
+  int size;
+} BSTree;
+
 #endif

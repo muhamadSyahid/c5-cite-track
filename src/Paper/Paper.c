@@ -13,3 +13,8 @@
 /// Tanggal     : 12-05-2025
 
 #include "Paper/Paper.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
+BSTree *authors_tree = NULL;
