@@ -1,4 +1,5 @@
-# C5-Cite-Track
+# CiteTrack
+
 Tugas Besar SDA | Kelompok 5
 
 CiteTrack merupakan pengembangan sebuah sistem yang mampu menampilkan daftar paper paling populer milik seorang penulis, berdasarkan jumlah sitasi yang diterima. Sistem ini dilengkapi fitur penyaringan (filter) berdasarkan nama penulis dan tahun publikasi, sehingga memudahkan pengguna dalam menemukan karya ilmiah yang paling berpengaruh dalam periode tertentu. Proses pengolahan data dilakukan menggunakan struktur data dinamis untuk memastikan efisiensi dalam pencarian dan penyusunan informasi.
@@ -16,21 +17,21 @@ CiteTrack merupakan pengembangan sebuah sistem yang mampu menampilkan daftar pap
 | AUTHOR | Nama penulis |
 
 ## Input & Output
+
 Sistem ini menerima nama penulis dan tahun publikasi, lalu menampilkan daftar paper paling populer karya penulis tersebut pada tahun itu, diurutkan berdasarkan jumlah sitasi masuk. Informasi yang ditampilkan meliputi judul, abstrak, jumlah sitasi masuk dan keluar, serta nama penulis lain (jika ada).
 
 ## Pembagian Tugas & Fitur
 
 | Nama Fitur | Anggota yg Mengerjakan |
-| --- | --- | 
-|  insert balance (BST) author & paper | Syahid |
-| parsing data | Ikhsan |
+| --- | --- |
+| initialize, insert balance (BST) author & paper | Syahid |
+| parsing data paper | Ikhsan |
 | sorting | Umem |
 | show popular paper | Hanif |
 | search paper by title | Helga |
 | search paper by author | Umem |
-| Input filter | Hanif | 
 | Detail paper | Helga |
-| Dashboard | Optional |
+| UI, Input & Dashboard | Ikhsan |
 
 ## Stackholder 
 
@@ -41,10 +42,3 @@ Sistem ini menerima nama penulis dan tahun publikasi, lalu menampilkan daftar pa
 | Perpustakaan dan Pusat Data Ilmiah Kampus | Penyedia dan pengelola data |
 | Pengembang Sistem / Mahasiswa Teknik Informatika | Pengembang sistem |
 |Institusi Pendidikan / Kampus | Pendukung implementasi dan pengembangan lebih lanjut |
-
-
-
-
-
-
-
