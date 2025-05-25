@@ -48,4 +48,15 @@ typedef struct
  */
 extern BSTree *authors_tree;
 
+/**
+ * BSTree untuk menyimpan data Paper
+ * @note Penyimpanan data utama
+ */
+extern BSTree *papers_tree;
+
+/**
+ * Double linked list untuk menyimpan data Paper untuk ditampilkan
+ */
+extern DLList *papers_list;
+
 #endif

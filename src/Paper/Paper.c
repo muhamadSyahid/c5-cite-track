@@ -18,3 +18,7 @@
 #include <stdlib.h>
 
 BSTree *authors_tree = NULL;
+
+BSTree *papers_tree = NULL;
+
+DLList *papers_list = NULL;
