@@ -59,4 +59,6 @@ extern BSTree *papers_tree;
  */
 extern DLList *papers_list;
 
+void search_paper_by_title(BSTreeNode *node, const char *title, DLList *paper_list);
+
 #endif
