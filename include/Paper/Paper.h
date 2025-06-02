@@ -61,6 +61,8 @@ extern BSTree *papers_tree;
  */
 extern DLList *papers_list;
 
+void print_paper(const Paper *paper);
+
 //menyimpan BST ke DLL
 void fill_papers_list(BSTreeNode *node, DLList *list);
 
@@ -69,7 +71,5 @@ void sort_papers_by_popularity(DLList *list);
 
 //menampilkan semua paper yang sudah terurut
 void show_all_papers_by_popularity();
-
-void print_paper(const Paper *paper);
 
 #endif

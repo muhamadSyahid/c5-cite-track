@@ -23,6 +23,38 @@ BSTree *papers_tree = NULL;
 
 DLList *papers_list = NULL;
 
+void print_paper(const Paper *paper)
+{
+  if (paper == NULL)
+  {
+    printf("Paper is NULL\n");
+    return;
+  }
+
+  printf("ID: %s\n", paper->id);
+  printf("Title: %s\n", paper->title);
+  printf("Abstract: %s\n", paper->paper_abstract);
+  printf("Year: %d\n", paper->year);
+
+  printf("Authors:\n");
+  for (int i = 0; i < paper->author_count; i++)
+  {
+    printf("- %s\n", paper->authors[i]);
+  }
+
+  printf("In Citations:\n");
+  for (int i = 0; i < paper->in_citation_count; i++)
+  {
+    printf("- %s\n", paper->in_citations[i]);
+  }
+
+  printf("Out Citations:\n");
+  for (int i = 0; i < paper->out_citation_count; i++)
+  {
+    printf("- %s\n", paper->out_citations[i]);
+  }
+}
+
 void fill_papers_list(BSTreeNode *node, DLList *list) {
     if (!node) return;
     fill_papers_list(node->left, list);
