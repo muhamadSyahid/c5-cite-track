@@ -30,4 +30,20 @@ typedef struct
   int size;
 } DLList;
 
+// Fungsi untuk menambah paper ke dalam list
+void add_paper_to_list(DLList *list, Paper *paper);
+
+// Fungsi untuk mengurutkan paper berdasarkan kriteria tertentu
+void sort_papers(DLList *list, int (*cmp)(Paper*, Paper*));
+
+// Fungsi pembanding untuk sorting berdasarkan tahun
+int compare_by_year(Paper *a, Paper *b);
+
+// Fungsi pembanding untuk sorting berdasarkan judul
+int compare_by_title(Paper *a, Paper *b);
+
+// Fungsi pembanding untuk sorting berdasarkan penulis
+int compare_by_author(Paper *a, Paper *b);
+
+
 #endif
