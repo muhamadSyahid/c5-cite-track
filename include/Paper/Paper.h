@@ -65,4 +65,6 @@ void print_paper(const Paper *paper);
 
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList *paper_list);
 
+void show_paper_detail(const Paper *paper);
+
 #endif
