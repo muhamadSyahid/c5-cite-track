@@ -36,7 +36,7 @@ typedef struct
   int author_count; // jumlah author
 } Paper;
 
-void print_paper(const Paper *paper);
+void print_paper(void *data);
 
 // fungsi membangun BSTree dari array Paper
 void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));

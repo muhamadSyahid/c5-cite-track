@@ -27,6 +27,9 @@ int main(int argc, char const *argv[])
   // Insert papers ke BSTree authors_tree & papers_tree
   build_bstree_paper(&papers_tree, papers, n_papers, compare_paper_by_title);
 
+  in_order_traversal_bstree_nodes(papers_tree->root, print_paper);
+  printf("\n");
+
   // Akhir program
   destroy_bstree(authors_tree);
   destroy_bstree(papers_tree);

@@ -18,8 +18,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-void print_paper(const Paper *paper)
+void print_paper(void *data)
 {
+  const Paper *paper = (const Paper *)data;
   if (paper == NULL)
   {
     printf("Paper is NULL\n");
