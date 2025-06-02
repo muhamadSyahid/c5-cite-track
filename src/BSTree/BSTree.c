@@ -11,3 +11,25 @@
 /// Tanggal     : 12-05-2025
 
 #include "BSTree/BSTree.h"
+#include "Paper/Paper.h"
+#include <string.h>
+
+// Fungsi Search by Author
+Author* search_author_by_name(BSTree *tree, const char *name) {
+    BSTreeNode *current = tree->root;
+
+    while (current != NULL) {
+        Author *author = (Author*)current->info;
+        int cmp = strcmp(author->name, name);
+
+        if (cmp == 0) {
+            return author;  
+        } else if (cmp < 0) {
+            current = current->right;  
+        } else {
+            current = current->left;  
+        }
+    }
+
+    return NULL;  
+}
