@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "Paper/Paper.h"
 
+/// Search by author 
 int main(int argc, char const *argv[])
 {
   char author_name[100];
