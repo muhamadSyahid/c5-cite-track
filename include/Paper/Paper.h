@@ -31,8 +31,10 @@ typedef struct
   int in_citation_count;  // jumlah sitasi masuk
   int out_citation_count; // jumlah sitasi keluar
 
-  int year;      // tahun
-  char **author; // nama nama author
+  int year;       // tahun
+  char **authors; // nama nama author
+
+  int author_count; // jumlah author
 } Paper;
 
 /// Struct untuk menyimpan data Author di dalam BSTree
@@ -58,6 +60,8 @@ extern BSTree *papers_tree;
  * Double linked list untuk menyimpan data Paper untuk ditampilkan
  */
 extern DLList *papers_list;
+
+void print_paper(const Paper *paper);
 
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList *paper_list);
 
