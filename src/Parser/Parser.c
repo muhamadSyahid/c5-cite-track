@@ -166,9 +166,7 @@ void load_json_papers(Paper ***papers, int *n_papers, const char *file_path)
   int count = 0;
   int line_count = 0;
 
-  char *line = NULL;
-  size_t len = 0;
-  ssize_t read;
+  char *buffer = (char *)malloc(INT_MAX * sizeof(char));
 
   fp = fopen(file_path, "r");
 
@@ -186,9 +184,8 @@ void load_json_papers(Paper ***papers, int *n_papers, const char *file_path)
 
   if (strcmp(get_filename_ext(file_path), "json") == 0)
   {
-    while ((read = getline(&line, &len, fp)) != -1)
-    {
-      Paper *paper = get_paper_from_json(line);
+    while (fgets(buffer, INT_MAX, fp) != NULL)     {
+      Paper *paper = get_paper_from_json(buffer);
 
       if (paper == NULL)
       {
@@ -200,10 +197,9 @@ void load_json_papers(Paper ***papers, int *n_papers, const char *file_path)
       count++;
     }
 
-    free(line);
-
+    
     *n_papers = count;
-
+    
     printf("Found %u papers in JSON file.\n", *n_papers);
   }
   else
@@ -212,4 +208,5 @@ void load_json_papers(Paper ***papers, int *n_papers, const char *file_path)
     free(papers);
   }
   fclose(fp);
+  free(buffer);
 }
