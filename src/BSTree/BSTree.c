@@ -25,6 +25,7 @@ BSTree *create_bstree()
         return NULL;
     }
     tree->root = NULL;
+    tree->size = 0; // PERBAIKAN: Inisialisasi size
     return tree;
 }
 
@@ -69,6 +70,109 @@ void destroy_bstree_nodes(BSTreeNode *node)
     free(node);
 }
 
+int getHeight(BSTreeNode *node)
+{
+    if (node == NULL)
+        return 0;
+    int leftHeight = getHeight(node->left);
+    int rightHeight = getHeight(node->right);
+    return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
+}
+
+int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+int getBalance(BSTreeNode *node)
+{
+    if (node == NULL)
+        return 0;
+    return getHeight(node->left) - getHeight(node->right);
+}
+
+BSTreeNode *rightRotate(BSTreeNode *y)
+{
+    BSTreeNode *x = y->left;
+    BSTreeNode *T2 = x->right;
+
+    // Lakukan rotasi
+    x->right = y;
+    y->left = T2;
+
+    return x; // Kembalikan root baru
+}
+
+BSTreeNode *leftRotate(BSTreeNode *x)
+{
+    BSTreeNode *y = x->right;
+    BSTreeNode *T2 = y->left;
+
+    // Lakukan rotasi
+    y->left = x;
+    x->right = T2;
+
+    return y; // Kembalikan root baru
+}
+
+// Implementasi insert untuk AVL Tree
+BSTreeNode *insert_node_avl(BSTreeNode *node, void *info, int (*compare)(const void *, const void *))
+{
+    // Lakukan insertion BST biasa
+    if (node == NULL)
+    {
+        return create_bstree_node(info);
+    }
+
+    if (compare(info, node->info) < 0)
+    {
+        node->left = insert_node_avl(node->left, info, compare);
+    }
+    else if (compare(info, node->info) > 0)
+    {
+        node->right = insert_node_avl(node->right, info, compare);
+    }
+    else
+    {
+        // Nilai sama, tidak insert (atau bisa diubah sesuai kebutuhan)
+        return node;
+    }
+
+    // Dapatkan balance factor dari node ancestor
+    int balance = getBalance(node);
+
+    // Jika node tidak seimbang, ada 4 kasus:
+
+    // Left Left Case
+    if (balance > 1 && compare(info, node->left->info) < 0)
+    {
+        return rightRotate(node);
+    }
+
+    // Right Right Case
+    if (balance < -1 && compare(info, node->right->info) > 0)
+    {
+        return leftRotate(node);
+    }
+
+    // Left Right Case
+    if (balance > 1 && compare(info, node->left->info) > 0)
+    {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+
+    // Right Left Case
+    if (balance < -1 && compare(info, node->right->info) < 0)
+    {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+
+    // Return node yang tidak berubah
+    return node;
+}
+
 void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const void *))
 {
     if (tree == NULL || info == NULL || compare == NULL)
@@ -76,44 +180,8 @@ void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const 
         return;
     }
 
-    BSTreeNode *new_node = create_bstree_node(info);
-    if (new_node == NULL)
-    {
-        return;
-    }
-
-    if (tree->root == NULL)
-    {
-        tree->root = new_node;
-        tree->size = 1;
-        return;
-    }
-
-    BSTreeNode *current = tree->root;
-    BSTreeNode *parent = NULL;
-
-    while (current != NULL)
-    {
-        parent = current;
-        if (compare(info, current->info) < 0)
-        {
-            current = current->left;
-        }
-        else
-        {
-            current = current->right;
-        }
-    }
-
-    if (compare(info, parent->info) < 0)
-    {
-        parent->left = new_node;
-    }
-    else
-    {
-        parent->right = new_node;
-    }
-
+    // Mrmasukkan node baru ke dalam AVL Tree
+    tree->root = insert_node_avl(tree->root, info, compare);
     tree->size++;
 }
 

@@ -37,6 +37,18 @@ BSTreeNode *create_bstree_node(void *info);
 
 void destroy_bstree_nodes(BSTreeNode *node);
 
+int getHeight(BSTreeNode *node);
+
+int max(int a, int b);
+
+int getBalance(BSTreeNode *node);
+
+BSTreeNode *rightRotate(BSTreeNode *y);
+
+BSTreeNode *leftRotate(BSTreeNode *x);
+
+BSTreeNode *insert_node_avl(BSTreeNode *node, void *info, int (*compare)(const void *, const void *));
+
 void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const void *));
 
 // Fungsi untuk melakukan traversal in-order pada BSTree secara rekursif
