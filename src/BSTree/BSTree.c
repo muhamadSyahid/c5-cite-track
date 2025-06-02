@@ -21,7 +21,7 @@ BSTree *create_bstree()
     BSTree *tree = (BSTree *)malloc(sizeof(BSTree));
     if (tree == NULL)
     {
-        fprintf(stderr, "Error allocating memory for BSTree\n");
+        printf("Error allocating memory for BSTree\n");
         return NULL;
     }
     tree->root = NULL;
@@ -33,9 +33,8 @@ void destroy_bstree(BSTree *tree)
     if (tree == NULL)
         return;
 
-    // Free all nodes in the tree
-    // This function should be implemented to free all nodes recursively
-    // free_bstree_nodes(tree->root);
+    // bebaskan semua node di dalam BSTree rekursif
+    destroy_bstree_nodes(tree->root);
 
     free(tree);
 }
@@ -45,7 +44,7 @@ BSTreeNode *create_bstree_node(void *info)
     BSTreeNode *node = (BSTreeNode *)malloc(sizeof(BSTreeNode));
     if (node == NULL)
     {
-        fprintf(stderr, "Error allocating memory for BSTreeNode\n");
+        printf("Error allocating memory for BSTreeNode\n");
         return NULL;
     }
     node->info = info;
@@ -54,14 +53,34 @@ BSTreeNode *create_bstree_node(void *info)
     return node;
 }
 
+void destroy_bstree_nodes(BSTreeNode *node)
+{
+    if (node == NULL)
+    {
+        return;
+    }
+
+    // Bebaskan subtree kiri dan kanan secara rekursif
+    destroy_bstree_nodes(node->left);
+    destroy_bstree_nodes(node->right);
+
+    // Bebaskan node itu sendiri
+    free(node->info);
+    free(node);
+}
+
 void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const void *))
 {
     if (tree == NULL || info == NULL || compare == NULL)
+    {
         return;
+    }
 
     BSTreeNode *new_node = create_bstree_node(info);
     if (new_node == NULL)
+    {
         return;
+    }
 
     if (tree->root == NULL)
     {
@@ -77,16 +96,40 @@ void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const 
     {
         parent = current;
         if (compare(info, current->info) < 0)
+        {
             current = current->left;
+        }
         else
+        {
             current = current->right;
+        }
     }
 
     if (compare(info, parent->info) < 0)
+    {
         parent->left = new_node;
+    }
     else
+    {
         parent->right = new_node;
+    }
 
     tree->size++;
 }
 
+void in_order_traversal_bstree_nodes(BSTreeNode *node, void (*visit)(void *))
+{
+    if (node == NULL)
+    {
+        return;
+    }
+
+    // Kunjungi subtree kiri
+    in_order_traversal_bstree_nodes(node->left, visit);
+
+    // Kunjungi node saat ini
+    visit(node->info);
+
+    // Kunjungi subtree kanan
+    in_order_traversal_bstree_nodes(node->right, visit);
+}

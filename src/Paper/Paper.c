@@ -16,12 +16,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-BSTree *authors_tree = NULL;
-
-BSTree *papers_tree = NULL;
-
-DLList *papers_list = NULL;
+#include <string.h>
 
 void print_paper(const Paper *paper)
 {
@@ -55,17 +50,17 @@ void print_paper(const Paper *paper)
   }
 }
 
-void build_bstree_paper(BSTree *tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
+void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
 {
-  tree = malloc(sizeof(BSTree));
-  if (tree == NULL)
+  *tree = create_bstree();
+  if (*tree == NULL)
   {
-    fprintf(stderr, "Error allocating memory for BSTree\n");
+    printf("Error alokasi memori untuk BSTree\n");
     return;
   }
-  if (tree == NULL || paper == NULL || n_papers <= 0 || compare == NULL)
+  if (paper == NULL || n_papers <= 0 || compare == NULL)
   {
-    fprintf(stderr, "Invalid parameters for build_bstree_paper\n");
+    printf("Parameter untuk build_bstree_paper invalid!\n");
     return;
   }
 
@@ -73,14 +68,30 @@ void build_bstree_paper(BSTree *tree, Paper **paper, int n_papers, int (*compare
   {
     if (paper[i] == NULL)
     {
-      fprintf(stderr, "Paper at index %d is NULL\n", i);
+      printf("Paper di index %d NULL\n", i);
       continue;
     }
-    insert_bstree(tree, paper[i], (int (*)(const void *, const void *))compare);
+    insert_bstree(*tree, paper[i], (int (*)(const void *, const void *))compare);
   }
 }
 
 int compare_paper_by_title(const void *paper1, const void *paper2)
 {
-  return 0;
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_title\n");
+    return 0;
+  }
+
+  // Cast void pointer ke Paper pointer
+  const Paper *p1 = (const Paper *)paper1;
+  const Paper *p2 = (const Paper *)paper2;
+
+  if (p1->title == NULL || p2->title == NULL)
+  {
+    printf("atu atau kedua judul NULL di compare_paper_by_title\n");
+    return 0;
+  }
+
+  return strcmp(p1->title, p2->title);
 }

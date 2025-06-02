@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <limits.h>
 
 const char *get_filename_ext(const char *filename)
 {
@@ -93,19 +94,19 @@ Paper *get_paper_from_json(const char *json_str)
   Paper *paper = (Paper *)calloc(1, sizeof(Paper));
   if (paper == NULL)
   {
-    fprintf(stderr, "Alokasi memori untuk Paper gagal.\n");
+    printf("Alokasi memori untuk Paper gagal.\n");
     return NULL;
   }
 
   cJSON *json = cJSON_Parse(json_str);
   if (json == NULL)
   {
-    fprintf(stderr, "Error parsing JSON: %s\n", cJSON_GetErrorPtr());
+    printf("Error parsing JSON: %s\n", cJSON_GetErrorPtr());
     free(paper);
     return NULL;
   }
 
-  cJSON *id_json = cJSON_GetObjectItemCaseSensitive(json, "title");
+  cJSON *id_json = cJSON_GetObjectItemCaseSensitive(json, "id");
   cJSON *title_json = cJSON_GetObjectItemCaseSensitive(json, "title");
   cJSON *abstract_json = cJSON_GetObjectItemCaseSensitive(json, "paperAbstract");
   cJSON *year_json = cJSON_GetObjectItemCaseSensitive(json, "year");
@@ -130,7 +131,7 @@ Paper *get_paper_from_json(const char *json_str)
 
   if (paper->in_citations == NULL || paper->out_citations == NULL || paper->authors == NULL)
   {
-    fprintf(stderr, "Alokasi memori untuk sitasi atau penulis gagal.\n");
+    printf("Alokasi memori untuk sitasi atau penulis gagal.\n");
     cJSON_Delete(json);
     free(paper);
     return NULL;
@@ -172,7 +173,7 @@ void load_json_papers(Paper ***papers, int *n_papers, const char *file_path)
 
   if (fp == NULL)
   {
-    fprintf(stderr, "Error opening file: %s\n", file_path);
+    printf("Error opening file: %s\n", file_path);
     return;
   }
 
@@ -184,7 +185,8 @@ void load_json_papers(Paper ***papers, int *n_papers, const char *file_path)
 
   if (strcmp(get_filename_ext(file_path), "json") == 0)
   {
-    while (fgets(buffer, INT_MAX, fp) != NULL)     {
+    while (fgets(buffer, INT_MAX, fp) != NULL)
+    {
       Paper *paper = get_paper_from_json(buffer);
 
       if (paper == NULL)
@@ -197,14 +199,13 @@ void load_json_papers(Paper ***papers, int *n_papers, const char *file_path)
       count++;
     }
 
-    
     *n_papers = count;
-    
+
     printf("Found %u papers in JSON file.\n", *n_papers);
   }
   else
   {
-    fprintf(stderr, "Unsupported file format: %s\n", get_filename_ext(file_path));
+    printf("Unsupported file format: %s\n", get_filename_ext(file_path));
     free(papers);
   }
   fclose(fp);

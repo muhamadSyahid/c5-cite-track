@@ -26,12 +26,20 @@ struct BSTreeNode
 typedef struct
 {
   BSTreeNode *root;
-  int size;  
+  int size;
 } BSTree;
 
 BSTree *create_bstree();
+
 void destroy_bstree(BSTree *tree);
+
 BSTreeNode *create_bstree_node(void *info);
+
+void destroy_bstree_nodes(BSTreeNode *node);
+
 void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const void *));
+
+// Fungsi untuk melakukan traversal in-order pada BSTree secara rekursif
+void in_order_traversal_bstree_nodes(BSTreeNode *node, void (*visit)(void *));
 
 #endif
