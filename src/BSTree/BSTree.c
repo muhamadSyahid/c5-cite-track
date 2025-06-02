@@ -135,7 +135,8 @@ BSTreeNode *insert_node_avl(BSTreeNode *node, void *info, int (*compare)(const v
     else
     {
         // Nilai sama, tidak insert (atau bisa diubah sesuai kebutuhan)
-        return node;
+        // return node;
+        node = insert_node_avl(node, info, compare);
     }
 
     // Dapatkan balance factor dari node ancestor
