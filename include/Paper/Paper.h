@@ -63,4 +63,6 @@ extern DLList *papers_list;
 
 void print_paper(const Paper *paper);
 
+void search_paper_by_title(BSTreeNode *node, const char *title, DLList *paper_list);
+
 #endif

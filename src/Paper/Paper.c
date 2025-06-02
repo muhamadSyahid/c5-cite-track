@@ -54,3 +54,19 @@ void print_paper(const Paper *paper)
     printf("- %s\n", paper->out_citations[i]);
   }
 }
+
+void search_paper_by_title(BSTreeNode *node, const char *title, DLList *paper_list)
+{
+    if (node == NULL)
+        return;
+
+    search_paper_by_title(node->left, title, paper_list);
+
+    Paper *paper = (Paper *)node->info;
+    if (strstr(paper->title, title) != NULL)
+    { // Mencari substring
+        insertLastDLList(paper_list, paper);
+    }
+
+    search_paper_by_title(node->right, title, paper_list);
+}
