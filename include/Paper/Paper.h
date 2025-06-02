@@ -31,8 +31,10 @@ typedef struct
   int in_citation_count;  // jumlah sitasi masuk
   int out_citation_count; // jumlah sitasi keluar
 
-  int year;      // tahun
-  char **author; // nama nama author
+  int year;       // tahun
+  char **authors; // nama nama author
+
+  int author_count; // jumlah author
 } Paper;
 
 /// Struct untuk menyimpan data Author di dalam BSTree
@@ -67,5 +69,7 @@ void sort_papers_by_popularity(DLList *list);
 
 //menampilkan semua paper yang sudah terurut
 void show_all_papers_by_popularity();
+
+void print_paper(const Paper *paper);
 
 #endif
