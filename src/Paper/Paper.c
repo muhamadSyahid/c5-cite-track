@@ -22,3 +22,91 @@ BSTree *authors_tree = NULL;
 BSTree *papers_tree = NULL;
 
 DLList *papers_list = NULL;
+
+void fill_papers_list(BSTreeNode *node, DLList *list) {
+    if (!node) return;
+    fill_papers_list(node->left, list);
+
+    // Tambahkan paper ke list
+    Paper *p = (Paper *)node->info;
+    
+    DLListNode *new_node = (DLListNode *)malloc(sizeof(DLListNode));
+    new_node->info = p;
+    new_node->prev = list->tail;
+    new_node->next = NULL;
+
+    if (list->tail) {
+        list->tail->next = new_node;
+    } else {
+        list->head = new_node;
+    }
+    list->tail = new_node;
+    list->size++;
+
+    fill_papers_list(node->right, list);
+}
+
+void sort_papers_by_popularity(DLList *list) {
+    if (!list || list->size <= 1) return;
+
+    for (DLListNode *i = list->head; i != NULL; i = i->next) {
+        DLListNode *max = i;
+        for (DLListNode *j = i->next; j != NULL; j = j->next) {
+            Paper *p1 = (Paper *)max->info;
+            Paper *p2 = (Paper *)j->info;
+            if (p2->in_citation_count > p1->in_citation_count) {
+                max = j;
+            }
+        }
+
+        if (max != i) {
+            void *temp = i->info;
+            i->info = max->info;
+            max->info = temp;
+        }
+    }
+}
+
+void show_all_papers_by_popularity() {
+    // Bebaskan papers_list yang lama untuk mencegah memory leak
+    if (papers_list) {
+        DLListNode *current = papers_list->head;
+        while (current) {
+            DLListNode *temp = current;
+            current = current->next;
+            free(temp);
+        }
+        free(papers_list);
+    }
+
+    // Alokasi papers_list baru
+    papers_list = (DLList *)malloc(sizeof(DLList));
+    if (!papers_list) {
+        fprintf(stderr, "Error: Gagal alokasi memori untuk papers_list\n");
+        return;
+    }
+    papers_list->head = papers_list->tail = NULL;
+    papers_list->size = 0;
+
+    // Cek apakah papers_tree valid
+    if (!papers_tree || !papers_tree->root) {
+        printf("\n=== Tidak ada paper untuk ditampilkan ===\n");
+        free(papers_list);
+        return;
+    }
+
+    // Isi dan urutkan papers_list
+    fill_papers_list(papers_tree->root, papers_list);
+    sort_papers_by_popularity(papers_list);
+
+    // Cetak semua paper
+    printf("\n=== All Papers Sorted by Popularity ===\n");
+    int index = 1;
+    for (DLListNode *node = papers_list->head; node != NULL; node = node->next) {
+        Paper *p = (Paper *)node->info;
+        if (p) {
+            printf("%d. %s (Citations: %d, Year: %d)\n", index++, p->title, p->in_citation_count, p->year);
+        }
+    }
+}
+
