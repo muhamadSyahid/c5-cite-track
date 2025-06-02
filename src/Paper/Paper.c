@@ -54,3 +54,33 @@ void print_paper(const Paper *paper)
     printf("- %s\n", paper->out_citations[i]);
   }
 }
+
+void build_bstree_paper(BSTree *tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
+{
+  tree = malloc(sizeof(BSTree));
+  if (tree == NULL)
+  {
+    fprintf(stderr, "Error allocating memory for BSTree\n");
+    return;
+  }
+  if (tree == NULL || paper == NULL || n_papers <= 0 || compare == NULL)
+  {
+    fprintf(stderr, "Invalid parameters for build_bstree_paper\n");
+    return;
+  }
+
+  for (int i = 0; i < n_papers; i++)
+  {
+    if (paper[i] == NULL)
+    {
+      fprintf(stderr, "Paper at index %d is NULL\n", i);
+      continue;
+    }
+    insert_bstree(tree, paper[i], (int (*)(const void *, const void *))compare);
+  }
+}
+
+int compare_paper_by_title(const void *paper1, const void *paper2)
+{
+  return 0;
+}

@@ -26,7 +26,12 @@ struct BSTreeNode
 typedef struct
 {
   BSTreeNode *root;
-  int size;
+  int size;  
 } BSTree;
+
+BSTree *create_bstree();
+void destroy_bstree(BSTree *tree);
+BSTreeNode *create_bstree_node(void *info);
+void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const void *));
 
 #endif
