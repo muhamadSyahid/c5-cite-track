@@ -47,4 +47,8 @@ void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int 
 // fungsi untuk membandingkan dua Paper berdasarkan judul
 int compare_paper_by_title(const void *paper1, const void *paper2);
 
+void search_paper_by_title(BSTreeNode *node, const char *title, DLList *paper_list);
+
+void show_paper_detail(const Paper *paper);
+
 #endif

@@ -13,6 +13,7 @@
 /// Tanggal     : 12-05-2025
 
 #include "Paper/Paper.h"
+#include "DLList/DLList.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,6 +49,79 @@ void print_paper(void *data)
   for (int i = 0; i < paper->out_citation_count; i++)
   {
     printf("- %s\n", paper->out_citations[i]);
+  }
+}
+
+void search_paper_by_title(BSTreeNode *node, const char *title, DLList *paper_list)
+{
+  if (node == NULL)
+    return;
+
+  search_paper_by_title(node->left, title, paper_list);
+
+  Paper *paper = (Paper *)node->info;
+  if (strstr(paper->title, title) != NULL)
+  { // Mencari substring
+    insertLastDLList(paper_list, paper);
+  }
+
+  search_paper_by_title(node->right, title, paper_list);
+}
+
+void show_paper_detail(const Paper *paper)
+{
+  if (paper == NULL)
+  {
+    printf("Detail paper tidak tersedia (pointer NULL).\n");
+    return;
+  }
+
+  printf("--- Detail Paper ---\n");
+  printf("ID: %s\n", (paper->id != NULL) ? paper->id : "[Tidak Ada ID]");
+  printf("Judul: %s\n", (paper->title != NULL) ? paper->title : "[Tidak Ada Judul]");
+  printf("Tahun Publikasi: %d\n", paper->year);
+  printf("Abstrak:\n%s\n", (paper->paper_abstract != NULL) ? paper->paper_abstract : "[Tidak Ada Abstrak]");
+
+  // Menampilkan daftar penulis
+  if (paper->authors != NULL && paper->author_count > 0)
+  {
+    printf("Penulis:\n");
+    for (int i = 0; i < paper->author_count; i++)
+    {
+      printf("  %d. %s\n", i + 1, (paper->authors[i] != NULL) ? paper->authors[i] : "[Nama Penulis Tidak Tersedia]");
+    }
+  }
+  else
+  {
+    printf("Penulis: Tidak tersedia atau tidak ada.\n");
+  }
+
+  // Menampilkan sitasi masuk
+  if (paper->in_citations != NULL && paper->in_citation_count > 0)
+  {
+    printf("Sitasi Masuk (%d):\n", paper->in_citation_count);
+    for (int i = 0; i < paper->in_citation_count; i++)
+    {
+      printf("  - %s\n", (paper->in_citations[i] != NULL) ? paper->in_citations[i] : "[ID Sitasi Tidak Tersedia]");
+    }
+  }
+  else
+  {
+    printf("Sitasi Masuk: Tidak ada.\n");
+  }
+
+  // Menampilkan sitasi keluar
+  if (paper->out_citations != NULL && paper->out_citation_count > 0)
+  {
+    printf("Sitasi Keluar (%d):\n", paper->out_citation_count);
+    for (int i = 0; i < paper->out_citation_count; i++)
+    {
+      printf("  - %s\n", (paper->out_citations[i] != NULL) ? paper->out_citations[i] : "[ID Sitasi Tidak Tersedia]");
+    }
+  }
+  else
+  {
+    printf("Sitasi Keluar: Tidak ada.\n");
   }
 }
 
