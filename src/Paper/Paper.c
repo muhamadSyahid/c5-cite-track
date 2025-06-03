@@ -135,11 +135,10 @@ void show_all_papers_by_popularity() {
 
     // Cetak semua paper
     printf("\n=== All Papers Sorted by Popularity ===\n");
-    int index = 1;
     for (DLListNode *node = papers_list->head; node != NULL; node = node->next) {
         Paper *p = (Paper *)node->info;
         if (p) {
-            printf("%d. %s (Citations: %d, Year: %d)\n", index++, p->title, p->in_citation_count, p->year);
+            print_paper(p);
         }
     }
 }
