@@ -83,6 +83,7 @@ char *get_input()
 // Fungsi untuk menampilkan statistik dan menu
 void display_menu_and_stats()
 {
+
   int paper_count = papers_tree->size;
   int author_count = authors_tree->size;
   int min_y = get_year_min(papers_tree->root);
