@@ -120,20 +120,46 @@ void display_menu_and_stats()
 
 void display_paper_actions()
 {
+  DLListNode *paper = shown_paper_list->head;
   char *action = NULL;
   printf("\n[1-%d] Show paper detail | asc: Ascending | dsc: Descending\n",
          shown_paper_list->size);
   printf("Aksi: ");
   action = get_input();
+  if (action == NULL)
+  {
+    printf("Aksi tidak valid.\n");
+    return;
+  }
+  int action_number = atoi(action);
+  for (int i = 0; i < action_number; i++)
+  {
+    paper = paper->next;
+  }
+  Paper *selected_paper = paper->info;
+  print_paper(selected_paper);
 }
 
 void display_author_actions()
 {
+  DLListNode *author = shown_author_list->head;
   char *action = NULL;
   printf("\n[1-%d] Show Author papers/detail | asc: Ascending | dsc: Descending\n",
          shown_author_list->size);
   printf("Aksi: ");
   action = get_input();
+  if (action == NULL)
+  {
+    printf("Aksi tidak valid.\n");
+    return;
+  }
+  int action_number = atoi(action);
+  for (int i = 0; i < action_number; i++)
+  {
+    author = author->next;
+  }
+  Author *selected_author = author->info;
+  print_author(selected_author);
 }
 
 int main(int argc, char const *argv[])
