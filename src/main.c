@@ -85,7 +85,8 @@ void display_menu_and_stats()
 {
     int paper_count = papers_tree->size;
     int author_count = authors_tree->size;
-    int min_y = 0, max_y = 0;
+    int min_y = get_year_min(papers_tree->root);
+    int max_y = get_year_max(papers_tree->root);
 
     if (paper_count > 0)
     {
@@ -97,14 +98,15 @@ void display_menu_and_stats()
     printf("==================================================\n");
     printf("Jumlah paper: %d\n", paper_count);
     printf("Jumlah author: %d\n", author_count);
-    if (paper_count > 0 && min_y != 0)
-    {
-        printf("Rentang tahun paper: %d - %d\n", min_y, max_y);
-    }
-    else
-    {
-        printf("Rentang tahun paper: Data tidak tersedia\n");
-    }
+    printf("Rentang tahun paper: %d - %d\n", min_y, max_y);
+    // if (paper_count > 0 && min_y != 0)
+    // {
+    //     printf("Rentang tahun paper: %d - %d\n", min_y, max_y);
+    // }
+    // else
+    // {
+    //     printf("Rentang tahun paper: Data tidak tersedia\n");
+    // }
     printf("--------------------------------------------------\n");
     printf("\nMenu Utama:\n");
     printf("1. Lihat Paper Populer\n");
@@ -135,7 +137,7 @@ void display_author_actions()
 
 int main(int argc, char const *argv[])
 {
-    load_json_papers(&papers, &n_papers, "data/test.json");
+    load_json_papers(&papers, &n_papers, "data/s2orc_small_part_2.json");
 
     papers_tree = bstree_create();
     authors_tree = bstree_create();
