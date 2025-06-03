@@ -11,60 +11,192 @@
 /// Tanggal     : 12-05-2025
 
 #include "DLList/DLList.h"
-#include "Paper/Paper.h"
-#include <stdio.h>
+
 #include <stdlib.h>
-#include <string.h>
+#include <stdio.h>
 
-// Fungsi untuk menukar dua paper
-void swap_papers(DLListNode *a, DLListNode *b) {
-    Paper *temp = (Paper*)a->info;
-    a->info = b->info;
-    b->info = temp;
+DLListNode *dllist_create_node(void *data)
+{
+  DLListNode *newNode = (DLListNode *)malloc(sizeof(DLListNode));
+  if (newNode == NULL)
+  {
+    return NULL;
+  }
+  newNode->info = data;
+  newNode->next = NULL;
+  newNode->prev = NULL;
+  return newNode;
 }
 
-// Fungsi untuk mengurutkan paper berdasarkan kriteria yang diberikan
-void sort_papers(DLList *list, int (*cmp)(Paper*, Paper*)) {
-    if (list == NULL || list->size < 2) {
-        return;  // Tidak perlu diurutkan jika list kosong atau hanya ada satu elemen
-    }
-
-    int swapped;
-    DLListNode *current;
-    DLListNode *last = NULL;
-
-    do {
-        swapped = 0;
-        current = list->head;
-
-        while (current->next != last) {
-            Paper *current_paper = (Paper*)current->info;
-            Paper *next_paper = (Paper*)current->next->info;
-
-            // Gunakan fungsi pembanding yang diberikan untuk mengurutkan
-            if (cmp(current_paper, next_paper) > 0) {
-                swap_papers(current, current->next);
-                swapped = 1;
-            }
-            current = current->next;
-        }
-        last = current; // Last is now the sorted paper at the end
-    } while (swapped);
+DLList *dllist_create()
+{
+  DLList *list = (DLList *)malloc(sizeof(DLList));
+  if (list == NULL)
+  {
+    printf("Error allocating memory for DLList\n");
+    return NULL;
+  }
+  list->head = NULL;
+  list->tail = NULL;
+  list->size = 0;
+  return list;
 }
 
-// Fungsi pembanding untuk sorting berdasarkan tahun
-int compare_by_year(Paper *a, Paper *b) {
-    return a->year - b->year;
+void dllist_clear(DLList *list)
+{
+  if (list == NULL)
+  {
+    return;
+  }
+  DLListNode *current = list->head;
+  DLListNode *nextNode;
+  while (current != NULL)
+  {
+    nextNode = current->next;
+    free(current);
+    current = nextNode;
+  }
+  list->head = NULL;
+  list->tail = NULL;
+  list->size = 0;
 }
 
-// Fungsi pembanding untuk sorting berdasarkan judul
-int compare_by_title(Paper *a, Paper *b) {
-    return strcmp(a->title, b->title);
+void dllist_destroy(DLList **list_ref)
+{
+  if (list_ref == NULL || *list_ref == NULL)
+  {
+    return;
+  }
+  dllist_clear(*list_ref); // Free all nodes
+  free(*list_ref);         // Free the list structure
+  *list_ref = NULL;        // Set the original pointer to NULL
 }
 
-// Fungsi pembanding untuk sorting berdasarkan penulis
-int compare_by_author(Paper *a, Paper *b) {
-    // Asumsikan a->authors[0] adalah penulis utama
-    return strcmp(a->authors[0], b->authors[0]);
+void dllist_insert_front(DLList **list, void *data)
+{
+  if (list == NULL)
+  {
+    return;
+  }
+  DLListNode *newNode = dllist_create_node(data);
+  if (newNode == NULL)
+  {
+    return;
+  }
+
+  if ((*list)->head == NULL)
+  {
+    (*list)->head = newNode;
+    (*list)->tail = newNode;
+  }
+  else
+  {
+    newNode->next = (*list)->head;
+    (*list)->head->prev = newNode;
+    (*list)->head = newNode;
+  }
+  (*list)->size++; // Only one node
+}
+
+void dllist_insert_back(DLList **list, void *data)
+{
+  if (list == NULL)
+  {
+    return;
+  }
+  DLListNode *newNode = dllist_create_node(data);
+  if (newNode == NULL)
+  {
+    return;
+  }
+
+  if ((*list)->tail == NULL)
+  {
+    (*list)->head = newNode;
+    (*list)->tail = newNode;
+  }
+  else
+  {
+    newNode->prev = (*list)->tail;
+    (*list)->tail->next = newNode;
+    (*list)->tail = newNode;
+  }
+  (*list)->size++;
+}
+
+void dllist_remove_front(DLList **list)
+{
+  if (list == NULL || *list == NULL || (*list)->head == NULL)
+  {
+    return;
+  }
+
+  DLListNode *deleted_node = (*list)->head;
+  if ((*list)->head == (*list)->tail)
+  {
+    (*list)->head = NULL;
+    (*list)->tail = NULL;
+  }
+  else
+  {
+    (*list)->head = (*list)->head->next;
+    (*list)->head->prev = NULL;
+  }
+
+  free(deleted_node);
+
+  (*list)->size--;
+}
+
+void dllist_remove_back(DLList **list)
+{
+  if (list == NULL || *list == NULL || (*list)->tail == NULL)
+  {
+    return;
+  }
+
+  DLListNode *deleted_node = (*list)->tail;
+  if ((*list)->head == (*list)->tail)
+  {
+    (*list)->head = NULL;
+    (*list)->tail = NULL;
+  }
+  else
+  {
+    (*list)->tail = (*list)->tail->prev;
+    (*list)->tail->next = NULL;
+  }
+
+  free(deleted_node);
+
+  (*list)->size--;
+}
+
+void dllist_traverse_forward(DLList *list, void (*visit)(void *data))
+{
+  if (list == NULL || visit == NULL || list->head == NULL)
+  {
+    return;
+  }
+  DLListNode *current = list->head;
+  while (current != NULL)
+  {
+    visit(current->info);
+    current = current->next;
+  }
+}
+
+void dllist_traverse_backward(DLList *list, void (*visit)(void *data))
+{
+  if (list == NULL || visit == NULL || list->tail == NULL)
+  {
+    return;
+  }
+  DLListNode *current = list->tail;
+  while (current != NULL)
+  {
+    visit(current->info);
+    current = current->prev;
+  }
 }
 

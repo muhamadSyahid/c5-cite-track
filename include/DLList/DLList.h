@@ -30,20 +30,23 @@ typedef struct
   int size;
 } DLList;
 
-// Fungsi untuk menambah paper ke dalam list
-void add_paper_to_list(DLList *list, Paper *paper);
+DLList *dllist_create();
+void dllist_destroy(DLList **list_ref);
+void dllist_clear(DLList *list);
 
-// Fungsi untuk mengurutkan paper berdasarkan kriteria tertentu
-void sort_papers(DLList *list, int (*cmp)(Paper*, Paper*));
+DLListNode *dllist_create_node(void *data);
 
-// Fungsi pembanding untuk sorting berdasarkan tahun
-int compare_by_year(Paper *a, Paper *b);
+// Insertion
+void dllist_insert_front(DLList **list, void *data);
+void dllist_insert_back(DLList **list, void *data);
 
-// Fungsi pembanding untuk sorting berdasarkan judul
-int compare_by_title(Paper *a, Paper *b);
+// Deletion
+void dllist_remove_front(DLList **list);
+void dllist_remove_back(DLList **list);
 
-// Fungsi pembanding untuk sorting berdasarkan penulis
-int compare_by_author(Paper *a, Paper *b);
+// Traversal
+void dllist_traverse_forward(DLList *list, void (*visit)(void *data));
+void dllist_traverse_backward(DLList *list, void (*visit)(void *data));
 
 
 #endif
