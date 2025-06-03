@@ -37,19 +37,23 @@ BSTreeNode *create_bstree_node(void *info);
 
 void destroy_bstree_nodes(BSTreeNode *node);
 
-int getHeight(BSTreeNode *node);
+// insert tanpa balancing
+void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const void *));
+
+int get_height(BSTreeNode *node);
 
 int max(int a, int b);
 
-int getBalance(BSTreeNode *node);
+int get_balance(BSTreeNode *node);
 
-BSTreeNode *rightRotate(BSTreeNode *y);
+BSTreeNode *right_rotate(BSTreeNode *y);
 
-BSTreeNode *leftRotate(BSTreeNode *x);
+BSTreeNode *left_rotate(BSTreeNode *x);
 
 BSTreeNode *insert_node_avl(BSTreeNode *node, void *info, int (*compare)(const void *, const void *));
 
-void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const void *));
+// insert dengan balancing AVL
+void insert_bstree_balance(BSTree *tree, void *info, int (*compare)(const void *, const void *));
 
 // Fungsi untuk melakukan traversal in-order pada BSTree secara rekursif
 void in_order_traversal_bstree_nodes(BSTreeNode *node, void (*visit)(void *));

@@ -20,7 +20,7 @@
 
 void print_paper(void *data)
 {
-  const Paper *paper = (const Paper *)data;
+  Paper *paper = (Paper *)data;
   if (paper == NULL)
   {
     printf("Paper is NULL\n");
@@ -76,6 +76,31 @@ void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compar
   }
 }
 
+void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
+{
+  *tree = create_bstree();
+  if (*tree == NULL)
+  {
+    printf("Error alokasi memori untuk BSTree\n");
+    return;
+  }
+  if (paper == NULL || n_papers <= 0 || compare == NULL)
+  {
+    printf("Parameter untuk build_bstree_paper invalid!\n");
+    return;
+  }
+
+  for (int i = 0; i < n_papers; i++)
+  {
+    if (paper[i] == NULL)
+    {
+      printf("Paper di index %d NULL\n", i);
+      continue;
+    }
+    insert_bstree_balance(*tree, paper[i], (int (*)(const void *, const void *))compare);
+  }
+}
+
 int compare_paper_by_title(const void *paper1, const void *paper2)
 {
   if (paper1 == NULL || paper2 == NULL)
@@ -85,8 +110,8 @@ int compare_paper_by_title(const void *paper1, const void *paper2)
   }
 
   // Cast void pointer ke Paper pointer
-  const Paper *p1 = (const Paper *)paper1;
-  const Paper *p2 = (const Paper *)paper2;
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
 
   if (p1->title == NULL || p2->title == NULL)
   {

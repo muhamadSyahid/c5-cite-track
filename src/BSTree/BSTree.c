@@ -70,28 +70,48 @@ void destroy_bstree_nodes(BSTreeNode *node)
     free(node);
 }
 
-int getHeight(BSTreeNode *node)
+int get_height(BSTreeNode *node)
 {
     if (node == NULL)
+    {
         return 0;
-    int leftHeight = getHeight(node->left);
-    int rightHeight = getHeight(node->right);
-    return (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
+    }
+
+    int leftHeight = get_height(node->left);
+    int rightHeight = get_height(node->right);
+
+    if (leftHeight > rightHeight)
+    {
+        return leftHeight + 1;
+    }
+    else
+    {
+        return rightHeight + 1;
+    }
 }
 
 int max(int a, int b)
 {
-    return (a > b) ? a : b;
+    if (a > b)
+    {
+        return a;
+    }
+    else
+    {
+        return b;
+    }
 }
 
-int getBalance(BSTreeNode *node)
+int get_balance(BSTreeNode *node)
 {
     if (node == NULL)
+    {
         return 0;
-    return getHeight(node->left) - getHeight(node->right);
+    }
+    return get_height(node->left) - get_height(node->right);
 }
 
-BSTreeNode *rightRotate(BSTreeNode *y)
+BSTreeNode *right_rotate(BSTreeNode *y)
 {
     BSTreeNode *x = y->left;
     BSTreeNode *T2 = x->right;
@@ -103,7 +123,7 @@ BSTreeNode *rightRotate(BSTreeNode *y)
     return x; // Kembalikan root baru
 }
 
-BSTreeNode *leftRotate(BSTreeNode *x)
+BSTreeNode *left_rotate(BSTreeNode *x)
 {
     BSTreeNode *y = x->right;
     BSTreeNode *T2 = y->left;
@@ -140,34 +160,34 @@ BSTreeNode *insert_node_avl(BSTreeNode *node, void *info, int (*compare)(const v
     }
 
     // Dapatkan balance factor dari node ancestor
-    int balance = getBalance(node);
+    int balance = get_balance(node);
 
     // Jika node tidak seimbang, ada 4 kasus:
 
     // Left Left Case
     if (balance > 1 && compare(info, node->left->info) < 0)
     {
-        return rightRotate(node);
+        return right_rotate(node);
     }
 
     // Right Right Case
     if (balance < -1 && compare(info, node->right->info) > 0)
     {
-        return leftRotate(node);
+        return left_rotate(node);
     }
 
     // Left Right Case
     if (balance > 1 && compare(info, node->left->info) > 0)
     {
-        node->left = leftRotate(node->left);
-        return rightRotate(node);
+        node->left = left_rotate(node->left);
+        return right_rotate(node);
     }
 
     // Right Left Case
     if (balance < -1 && compare(info, node->right->info) < 0)
     {
-        node->right = rightRotate(node->right);
-        return leftRotate(node);
+        node->right = right_rotate(node->right);
+        return left_rotate(node);
     }
 
     // Return node yang tidak berubah
@@ -175,6 +195,54 @@ BSTreeNode *insert_node_avl(BSTreeNode *node, void *info, int (*compare)(const v
 }
 
 void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const void *))
+{
+    if (tree == NULL || info == NULL || compare == NULL)
+    {
+        return;
+    }
+
+    BSTreeNode *new_node = create_bstree_node(info);
+    if (new_node == NULL)
+    {
+        return;
+    }
+
+    if (tree->root == NULL)
+    {
+        tree->root = new_node;
+        tree->size = 1;
+        return;
+    }
+
+    BSTreeNode *current = tree->root;
+    BSTreeNode *parent = NULL;
+
+    while (current != NULL)
+    {
+        parent = current;
+        if (compare(info, current->info) < 0)
+        {
+            current = current->left;
+        }
+        else
+        {
+            current = current->right;
+        }
+    }
+
+    if (compare(info, parent->info) < 0)
+    {
+        parent->left = new_node;
+    }
+    else
+    {
+        parent->right = new_node;
+    }
+
+    tree->size++;
+}
+
+void insert_bstree_balance(BSTree *tree, void *info, int (*compare)(const void *, const void *))
 {
     if (tree == NULL || info == NULL || compare == NULL)
     {
