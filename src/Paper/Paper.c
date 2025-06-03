@@ -17,15 +17,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-BSTree *authors_tree = NULL;
-
-BSTree *papers_tree = NULL;
-
-DLList *papers_list = NULL;
-
-void print_paper(const Paper *paper)
+void print_paper(void *data)
 {
+  Paper *paper = (Paper *)data;
   if (paper == NULL)
   {
     printf("Paper is NULL\n");
@@ -127,4 +123,75 @@ void show_paper_detail(const Paper *paper)
   {
     printf("Sitasi Keluar: Tidak ada.\n");
   }
+}
+
+void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
+{
+  *tree = create_bstree();
+  if (*tree == NULL)
+  {
+    printf("Error alokasi memori untuk BSTree\n");
+    return;
+  }
+  if (paper == NULL || n_papers <= 0 || compare == NULL)
+  {
+    printf("Parameter untuk build_bstree_paper invalid!\n");
+    return;
+  }
+
+  for (int i = 0; i < n_papers; i++)
+  {
+    if (paper[i] == NULL)
+    {
+      printf("Paper di index %d NULL\n", i);
+      continue;
+    }
+    insert_bstree(*tree, paper[i], (int (*)(const void *, const void *))compare);
+  }
+}
+
+void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
+{
+  *tree = create_bstree();
+  if (*tree == NULL)
+  {
+    printf("Error alokasi memori untuk BSTree\n");
+    return;
+  }
+  if (paper == NULL || n_papers <= 0 || compare == NULL)
+  {
+    printf("Parameter untuk build_bstree_paper invalid!\n");
+    return;
+  }
+
+  for (int i = 0; i < n_papers; i++)
+  {
+    if (paper[i] == NULL)
+    {
+      printf("Paper di index %d NULL\n", i);
+      continue;
+    }
+    insert_bstree_balance(*tree, paper[i], (int (*)(const void *, const void *))compare);
+  }
+}
+
+int compare_paper_by_title(const void *paper1, const void *paper2)
+{
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_title\n");
+    return 0;
+  }
+
+  // Cast void pointer ke Paper pointer
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
+
+  if (p1->title == NULL || p2->title == NULL)
+  {
+    printf("atu atau kedua judul NULL di compare_paper_by_title\n");
+    return 0;
+  }
+
+  return strcmp(p1->title, p2->title);
 }
