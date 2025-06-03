@@ -58,6 +58,5 @@ int main(int argc, char const *argv[])
   bstree_destroy(papers_tree);
 
   free(papers);
-
   return 0;
 }
