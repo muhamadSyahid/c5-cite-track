@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 int kunjungan = 0;
 
@@ -400,4 +401,52 @@ void show_paper_detail(const Paper *paper)
   {
     printf("Sitasi Keluar: Tidak ada.\n");
   }
+}
+
+int get_year_min(BSTreeNode *node)
+{
+  if (node == NULL)
+  {
+    return INT_MAX;
+  }
+
+  int min_year = node->info ? ((Paper *)node->info)->year : INT_MAX;
+
+  int left_min = get_year_min(node->left);
+  int right_min = get_year_min(node->right);
+
+  if (left_min < min_year)
+  {
+    min_year = left_min;
+  }
+  if (right_min < min_year)
+  {
+    min_year = right_min;
+  }
+
+  return min_year;
+}
+
+int get_year_max(BSTreeNode *node)
+{
+  if (node == NULL)
+  {
+    return INT_MIN;
+  }
+
+  int max_year = node->info ? ((Paper *)node->info)->year : INT_MIN;
+
+  int left_max = get_year_max(node->left);
+  int right_max = get_year_max(node->right);
+
+  if (left_max > max_year)
+  {
+    max_year = left_max;
+  }
+  if (right_max > max_year)
+  {
+    max_year = right_max;
+  }
+
+  return max_year;
 }

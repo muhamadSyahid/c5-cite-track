@@ -64,4 +64,8 @@ void get_popular_papers(BSTreeNode *node, DLList **paper_list, int n);
 
 void show_paper_detail(const Paper *paper);
 
+// fungsi untuk mengambil rentang tahun dari Paper
+int get_year_min(BSTreeNode *node);
+int get_year_max(BSTreeNode *node);
+
 #endif
