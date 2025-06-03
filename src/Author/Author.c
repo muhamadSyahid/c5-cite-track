@@ -1,3 +1,17 @@
+/// Nama File   : Paper.c
+///
+/// Deskripsi   : File body untuk ADT Paper yang memanfaatkan ADT
+///               Binary Search Tree untuk menyimpan data Author dan
+///               Double Linked List untuk menyimpan data Paper
+///
+/// Dibuat oleh : Hanifidin Ibrahim     (241511076)
+///               Helga Athifa Hidayat  (241511077)
+///               Hisyam Khaeru Umam    (241511078)
+///               Ikhsan Satriadi       (241511080)
+///               Muhamad Syahid        (241511081)
+///
+/// Tanggal     : 03-06-2025
+
 #include "Author/Author.h"
 
 #include <stdio.h>
@@ -71,7 +85,7 @@ void build_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compa
                 Author *new_author = malloc(sizeof(Author));
                 DLList *new_author_papers = dllist_create();
 
-                new_author->name = malloc(strlen(paper[i]->authors[j]) * sizeof(char));
+                new_author->name = malloc(strlen(paper[i]->authors[j]) * sizeof(char) + 1);
 
                 strcpy(new_author->name, paper[i]->authors[j]);
 
@@ -83,11 +97,6 @@ void build_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compa
             }
         }
     }
-}
-
-// Fungsi untuk membangun BSTree author dengan balancing AVL
-void build_balance_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
-{
 }
 
 bool is_author_exist(BSTreeNode *node, const char *author)
@@ -138,6 +147,20 @@ int compare_author_name(const void *author1, const void *author2)
 
 void search_author(BSTreeNode *node, const char *author, DLList **author_list)
 {
+    if (node == NULL)
+    {
+        return;
+    }
+
+    search_author(node->left, author, author_list);
+
+    Author *a = (Author *)node->info;
+    if (strstr(a->name, author) != NULL) // Mencari substring
+    {
+        dllist_insert_back(author_list, a);
+    }
+
+    search_author(node->right, author, author_list);
 }
 
 // Fungsi untuk mencari daftar paper berdasarkan author dan memasukkannya ke dalam DLList

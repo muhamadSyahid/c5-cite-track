@@ -9,7 +9,7 @@
 ///               Ikhsan Satriadi       (241511080)
 ///               Muhamad Syahid        (241511081)
 ///
-/// Tanggal     : 12-05-2025
+/// Tanggal     : 02-06-2025
 
 #ifndef AUTHOR_H
 #define AUTHOR_H
@@ -34,9 +34,6 @@ void search_array_paper_by_author(Paper **paper, int n_papers, const char *autho
 
 // fungsi membangun BSTree author dari array Paper tanpa balancing
 void build_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
-
-// fungsi membangun BSTree author dari array Paper dengan balancing AVL
-void build_balance_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
 
 // fungsi untuk mengecek apakah author ada di BSTree
 bool is_author_exist(BSTreeNode *node, const char *author);
