@@ -67,7 +67,7 @@ void fill_papers_list(BSTreeNode *node, DLList *list) {
     new_node->prev = list->tail;
     new_node->next = NULL;
 
-    if (list->tail) {
+    if (list->tail != NULL) {
         list->tail->next = new_node;
     } else {
         list->head = new_node;
@@ -79,7 +79,9 @@ void fill_papers_list(BSTreeNode *node, DLList *list) {
 }
 
 void sort_papers_by_popularity(DLList *list) {
-    if (!list || list->size <= 1) return;
+    if (list == NULL || list->size <= 1){
+        return;
+    }
 
     for (DLListNode *i = list->head; i != NULL; i = i->next) {
         DLListNode *max = i;
@@ -101,7 +103,7 @@ void sort_papers_by_popularity(DLList *list) {
 
 void show_all_papers_by_popularity() {
     // Bebaskan papers_list yang lama untuk mencegah memory leak
-    if (papers_list) {
+    if (papers_list != NULL) {
         DLListNode *current = papers_list->head;
         while (current) {
             DLListNode *temp = current;
@@ -113,7 +115,7 @@ void show_all_papers_by_popularity() {
 
     // Alokasi papers_list baru
     papers_list = (DLList *)malloc(sizeof(DLList));
-    if (!papers_list) {
+    if (papers_list == NULL) {
         fprintf(stderr, "Error: Gagal alokasi memori untuk papers_list\n");
         return;
     }
@@ -121,7 +123,7 @@ void show_all_papers_by_popularity() {
     papers_list->size = 0;
 
     // Cek apakah papers_tree valid
-    if (!papers_tree || !papers_tree->root) {
+    if (papers_tree == NULL || papers_tree->root == NULL) {
         printf("\n=== Tidak ada paper untuk ditampilkan ===\n");
         free(papers_list);
         return;
