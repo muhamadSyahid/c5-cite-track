@@ -50,6 +50,10 @@ int compare_paper_by_title(const void *paper1, const void *paper2);
 // fungsi untuk mencari Paper berdasarkan judul dan memasukkannya ke dalam DLList
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list);
 
+// fungsi untuk mengambil data Paper yang populer berdasarkan jumlah sitasi
+// dan memasukkannya ke dalam DLList sejumlah n
+void get_popular_papers(BSTreeNode *node, DLList **paper_list, int n);
+
 void show_paper_detail(const Paper *paper);
 
 #endif

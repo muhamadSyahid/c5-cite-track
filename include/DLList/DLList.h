@@ -40,6 +40,10 @@ DLListNode *dllist_create_node(void *data);
 void dllist_insert_front(DLList **list, void *data);
 void dllist_insert_back(DLList **list, void *data);
 
+// Deletion
+void dllist_remove_front(DLList **list);
+void dllist_remove_back(DLList **list);
+
 // Traversal
 void dllist_traverse_forward(DLList *list, void (*visit)(void *data));
 void dllist_traverse_backward(DLList *list, void (*visit)(void *data));

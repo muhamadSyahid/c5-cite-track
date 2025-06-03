@@ -16,6 +16,7 @@
 
 #include "BSTree/BSTree.h"
 #include "DLList/DLList.h"
+#include "Paper/Paper.h"
 
 /// Struct untuk menyimpan data Author
 typedef struct
@@ -23,5 +24,19 @@ typedef struct
   char *name;     // nama author
   DLList *papers; // list Paper
 } Author;
+
+void print_author(void *data);
+
+// fungsi membangun BSTree author dari array Paper tanpa balancing
+void build_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
+
+// fungsi membangun BSTree author dari array Paper dengan balancing AVL
+void build_balance_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
+
+// fungsi untuk membandingkan dua Author berdasarkan nama
+int compare_author_name(const void *author1, const void *author2);
+
+// fungsi untuk mencari daftar Paper berdasarkan Author dan memasukkannya ke dalam DLList
+void search_paper_by_author(BSTreeNode *node, const char *author, DLList **paper_list);
 
 #endif

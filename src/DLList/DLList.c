@@ -95,7 +95,7 @@ void dllist_insert_front(DLList **list, void *data)
     (*list)->head->prev = newNode;
     (*list)->head = newNode;
   }
-  (*list)->size++;
+  (*list)->size++; // Only one node
 }
 
 void dllist_insert_back(DLList **list, void *data)
@@ -122,6 +122,54 @@ void dllist_insert_back(DLList **list, void *data)
     (*list)->tail = newNode;
   }
   (*list)->size++;
+}
+
+void dllist_remove_front(DLList **list)
+{
+  if (list == NULL || *list == NULL || (*list)->head == NULL)
+  {
+    return;
+  }
+
+  DLListNode *deleted_node = (*list)->head;
+  if ((*list)->head == (*list)->tail)
+  {
+    (*list)->head = NULL;
+    (*list)->tail = NULL;
+  }
+  else
+  {
+    (*list)->head = (*list)->head->next;
+    (*list)->head->prev = NULL;
+  }
+
+  free(deleted_node);
+
+  (*list)->size--;
+}
+
+void dllist_remove_back(DLList **list)
+{
+  if (list == NULL || *list == NULL || (*list)->tail == NULL)
+  {
+    return;
+  }
+
+  DLListNode *deleted_node = (*list)->tail;
+  if ((*list)->head == (*list)->tail)
+  {
+    (*list)->head = NULL;
+    (*list)->tail = NULL;
+  }
+  else
+  {
+    (*list)->tail = (*list)->tail->prev;
+    (*list)->tail->next = NULL;
+  }
+
+  free(deleted_node);
+
+  (*list)->size--;
 }
 
 void dllist_traverse_forward(DLList *list, void (*visit)(void *data))

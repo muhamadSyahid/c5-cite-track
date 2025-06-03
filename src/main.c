@@ -51,8 +51,6 @@ int main(int argc, char const *argv[])
 
   search_paper_by_title(balance_papers_tree->root, "Prospective", &shown_paper_list);
 
-  dllist_traverse_forward(shown_paper_list, print_title);
-  dllist_traverse_backward(shown_paper_list, print_title);
   printf("\n");
 
   // Akhir program
