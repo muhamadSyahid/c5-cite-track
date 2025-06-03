@@ -38,13 +38,21 @@ int main(int argc, char const *argv[])
 {
   load_json_papers(&papers, &n_papers, "data/test.json");
 
+  shown_paper_list = dllist_create();
+
   // Insert papers ke BSTree authors_tree tanpa balancing
   build_bstree_paper(&papers_tree, papers, n_papers, compare_paper_by_title);
 
   // Insert authors ke BSTree authors_tree dengan balancing AVL
   build_balance_bstree_paper(&balance_papers_tree, papers, n_papers, compare_paper_by_title);
 
-  in_order_traversal_bstree_nodes(balance_papers_tree->root, print_title);
+  // in_order_traversal_bstree_nodes(balance_papers_tree->root, print_title);
+  // printf("\n");
+
+  search_paper_by_title(balance_papers_tree->root, "Prospective", &shown_paper_list);
+
+  dllist_traverse_forward(shown_paper_list, print_title);
+  dllist_traverse_backward(shown_paper_list, print_title);
   printf("\n");
 
   // Akhir program

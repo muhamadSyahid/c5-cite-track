@@ -32,7 +32,9 @@ BSTree *create_bstree()
 void destroy_bstree(BSTree *tree)
 {
     if (tree == NULL)
+    {
         return;
+    }
 
     // bebaskan semua node di dalam BSTree rekursif
     destroy_bstree_nodes(tree->root);
