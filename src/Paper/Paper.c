@@ -129,7 +129,7 @@ void show_paper_detail(const Paper *paper)
 
 void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
 {
-  *tree = create_bstree();
+  *tree = bstree_create();
   if (*tree == NULL)
   {
     printf("Error alokasi memori untuk BSTree\n");
@@ -148,13 +148,13 @@ void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compar
       printf("Paper di index %d NULL\n", i);
       continue;
     }
-    insert_bstree(*tree, paper[i], (int (*)(const void *, const void *))compare);
+    bstree_insert(*tree, paper[i], (int (*)(const void *, const void *))compare);
   }
 }
 
 void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
 {
-  *tree = create_bstree();
+  *tree = bstree_create();
   if (*tree == NULL)
   {
     printf("Error alokasi memori untuk BSTree\n");
@@ -173,7 +173,7 @@ void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int 
       printf("Paper di index %d NULL\n", i);
       continue;
     }
-    insert_bstree_balance(*tree, paper[i], (int (*)(const void *, const void *))compare);
+    bstree_insert_balance(*tree, paper[i], (int (*)(const void *, const void *))compare);
   }
 }
 

@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-BSTree *create_bstree()
+BSTree *bstree_create()
 {
     BSTree *tree = (BSTree *)malloc(sizeof(BSTree));
     if (tree == NULL)
@@ -29,7 +29,7 @@ BSTree *create_bstree()
     return tree;
 }
 
-void destroy_bstree(BSTree *tree)
+void bstree_destroy(BSTree *tree)
 {
     if (tree == NULL)
     {
@@ -37,12 +37,12 @@ void destroy_bstree(BSTree *tree)
     }
 
     // bebaskan semua node di dalam BSTree rekursif
-    destroy_bstree_nodes(tree->root);
+    bstree_destroy_nodes(tree->root);
 
     free(tree);
 }
 
-BSTreeNode *create_bstree_node(void *info)
+BSTreeNode *bstree_create_node(void *info)
 {
     BSTreeNode *node = (BSTreeNode *)malloc(sizeof(BSTreeNode));
     if (node == NULL)
@@ -56,7 +56,7 @@ BSTreeNode *create_bstree_node(void *info)
     return node;
 }
 
-void destroy_bstree_nodes(BSTreeNode *node)
+void bstree_destroy_nodes(BSTreeNode *node)
 {
     if (node == NULL)
     {
@@ -64,23 +64,23 @@ void destroy_bstree_nodes(BSTreeNode *node)
     }
 
     // Bebaskan subtree kiri dan kanan secara rekursif
-    destroy_bstree_nodes(node->left);
-    destroy_bstree_nodes(node->right);
+    bstree_destroy_nodes(node->left);
+    bstree_destroy_nodes(node->right);
 
     // Bebaskan node itu sendiri
     free(node->info);
     free(node);
 }
 
-int get_height(BSTreeNode *node)
+int bstree_get_height(BSTreeNode *node)
 {
     if (node == NULL)
     {
         return 0;
     }
 
-    int leftHeight = get_height(node->left);
-    int rightHeight = get_height(node->right);
+    int leftHeight = bstree_get_height(node->left);
+    int rightHeight = bstree_get_height(node->right);
 
     if (leftHeight > rightHeight)
     {
@@ -104,16 +104,16 @@ int max(int a, int b)
     }
 }
 
-int get_balance(BSTreeNode *node)
+int bstree_get_balance(BSTreeNode *node)
 {
     if (node == NULL)
     {
         return 0;
     }
-    return get_height(node->left) - get_height(node->right);
+    return bstree_get_height(node->left) - bstree_get_height(node->right);
 }
 
-BSTreeNode *right_rotate(BSTreeNode *y)
+BSTreeNode *bstree_right_rotate(BSTreeNode *y)
 {
     BSTreeNode *x = y->left;
     BSTreeNode *T2 = x->right;
@@ -125,7 +125,7 @@ BSTreeNode *right_rotate(BSTreeNode *y)
     return x; // Kembalikan root baru
 }
 
-BSTreeNode *left_rotate(BSTreeNode *x)
+BSTreeNode *bstree_left_rotate(BSTreeNode *x)
 {
     BSTreeNode *y = x->right;
     BSTreeNode *T2 = y->left;
@@ -138,72 +138,72 @@ BSTreeNode *left_rotate(BSTreeNode *x)
 }
 
 // Implementasi insert untuk AVL Tree
-BSTreeNode *insert_node_avl(BSTreeNode *node, void *info, int (*compare)(const void *, const void *))
+BSTreeNode *bstree_insert_node_avl(BSTreeNode *node, void *info, int (*compare)(const void *, const void *))
 {
     // Lakukan insertion BST biasa
     if (node == NULL)
     {
-        return create_bstree_node(info);
+        return bstree_create_node(info);
     }
 
     if (compare(info, node->info) < 0)
     {
-        node->left = insert_node_avl(node->left, info, compare);
+        node->left = bstree_insert_node_avl(node->left, info, compare);
     }
     else if (compare(info, node->info) > 0)
     {
-        node->right = insert_node_avl(node->right, info, compare);
+        node->right = bstree_insert_node_avl(node->right, info, compare);
     }
     else
     {
         // Nilai sama, tidak insert (atau bisa diubah sesuai kebutuhan)
         // return node;
-        node = insert_node_avl(node, info, compare);
+        node = bstree_insert_node_avl(node, info, compare);
     }
 
     // Dapatkan balance factor dari node ancestor
-    int balance = get_balance(node);
+    int balance = bstree_get_balance(node);
 
     // Jika node tidak seimbang, ada 4 kasus:
 
     // Left Left Case
     if (balance > 1 && compare(info, node->left->info) < 0)
     {
-        return right_rotate(node);
+        return bstree_right_rotate(node);
     }
 
     // Right Right Case
     if (balance < -1 && compare(info, node->right->info) > 0)
     {
-        return left_rotate(node);
+        return bstree_left_rotate(node);
     }
 
     // Left Right Case
     if (balance > 1 && compare(info, node->left->info) > 0)
     {
-        node->left = left_rotate(node->left);
-        return right_rotate(node);
+        node->left = bstree_left_rotate(node->left);
+        return bstree_right_rotate(node);
     }
 
     // Right Left Case
     if (balance < -1 && compare(info, node->right->info) < 0)
     {
-        node->right = right_rotate(node->right);
-        return left_rotate(node);
+        node->right = bstree_right_rotate(node->right);
+        return bstree_left_rotate(node);
     }
 
     // Return node yang tidak berubah
     return node;
 }
 
-void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const void *))
+void bstree_insert(BSTree *tree, void *info, int (*compare)(const void *, const void *))
 {
     if (tree == NULL || info == NULL || compare == NULL)
     {
         return;
     }
 
-    BSTreeNode *new_node = create_bstree_node(info);
+    BSTreeNode *new_node = bstree_create_node(info);
     if (new_node == NULL)
     {
         return;
@@ -244,7 +244,7 @@ void insert_bstree(BSTree *tree, void *info, int (*compare)(const void *, const 
     tree->size++;
 }
 
-void insert_bstree_balance(BSTree *tree, void *info, int (*compare)(const void *, const void *))
+void bstree_insert_balance(BSTree *tree, void *info, int (*compare)(const void *, const void *))
 {
     if (tree == NULL || info == NULL || compare == NULL)
     {
@@ -252,11 +252,11 @@ void insert_bstree_balance(BSTree *tree, void *info, int (*compare)(const void *
     }
 
     // Mrmasukkan node baru ke dalam AVL Tree
-    tree->root = insert_node_avl(tree->root, info, compare);
+    tree->root = bstree_insert_node_avl(tree->root, info, compare);
     tree->size++;
 }
 
-void in_order_traversal_bstree_nodes(BSTreeNode *node, void (*visit)(void *))
+void bstree_in_order_traversal(BSTreeNode *node, void (*visit)(void *))
 {
     if (node == NULL)
     {
@@ -264,11 +264,11 @@ void in_order_traversal_bstree_nodes(BSTreeNode *node, void (*visit)(void *))
     }
 
     // Kunjungi subtree kiri
-    in_order_traversal_bstree_nodes(node->left, visit);
+    bstree_in_order_traversal(node->left, visit);
 
     // Kunjungi node saat ini
     visit(node->info);
 
     // Kunjungi subtree kanan
-    in_order_traversal_bstree_nodes(node->right, visit);
+    bstree_in_order_traversal(node->right, visit);
 }

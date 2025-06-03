@@ -46,7 +46,7 @@ int main(int argc, char const *argv[])
   // Insert authors ke BSTree authors_tree dengan balancing AVL
   build_balance_bstree_paper(&balance_papers_tree, papers, n_papers, compare_paper_by_title);
 
-  // in_order_traversal_bstree_nodes(balance_papers_tree->root, print_title);
+  // bstree_in_order_traversal(balance_papers_tree->root, print_title);
   // printf("\n");
 
   search_paper_by_title(balance_papers_tree->root, "Prospective", &shown_paper_list);
@@ -56,8 +56,8 @@ int main(int argc, char const *argv[])
   printf("\n");
 
   // Akhir program
-  destroy_bstree(authors_tree);
-  destroy_bstree(papers_tree);
+  bstree_destroy(authors_tree);
+  bstree_destroy(papers_tree);
 
   free(papers);
 
