@@ -17,40 +17,39 @@
 #include "BSTree/BSTree.h"
 #include "DLList/DLList.h"
 
-/// Struct untuk menyimpan data Paper
+// Struct untuk menyimpan data Paper
 typedef struct
 {
-  char *id;             // id paper
-  char *title;          // judul paper
-  char *paper_abstract; // abstrak paper
-
-  char **in_citations;  // array id sitasi
-  char **out_citations; // array id sitasi
-
+  char *id;               // id paper
+  char *title;            // judul paper
+  char *paper_abstract;   // abstrak paper
+  char **in_citations;    // array id sitasi
+  char **out_citations;   // array id sitasi
   int in_citation_count;  // jumlah sitasi masuk
   int out_citation_count; // jumlah sitasi keluar
-
-  int year;       // tahun
-  char **authors; // nama nama author
-
-  int author_count; // jumlah author
+  int year;               // tahun
+  char **authors;         // nama nama author
+  int author_count;       // jumlah author
 } Paper;
 
 void print_paper(void *data);
 
-// fungsi membangun BSTree dari array Paper tanpa balancing
+// Fungsi membangun BSTree dari array Paper tanpa balancing
 void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
 
-// fungsi membangun BSTree dari array Paper dengan balancing AVL
-void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
-
-// fungsi untuk membandingkan dua Paper berdasarkan judul
+// Fungsi untuk membandingkan dua Paper berdasarkan judul
 int compare_paper_by_title(const void *paper1, const void *paper2);
 
-// fungsi untuk mencari Paper berdasarkan judul dan memasukkannya ke dalam DLList
+// Fungsi untuk membandingkan dua Paper berdasarkan tahun
+int compare_paper_by_year(const void *paper1, const void *paper2);
+
+// Fungsi untuk membandingkan dua Paper berdasarkan author
+int compare_paper_by_author(const void *paper1, const void *paper2);
+
+// Fungsi untuk mencari Paper berdasarkan judul dan memasukkannya ke dalam DLList
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list);
 
-// fungsi untuk mengambil data Paper yang populer berdasarkan jumlah sitasi
+// Fungsi untuk mengambil data Paper yang populer berdasarkan jumlah sitasi
 // dan memasukkannya ke dalam DLList sejumlah n
 void get_popular_papers(BSTreeNode *node, DLList **paper_list, int n);
 

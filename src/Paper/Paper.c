@@ -14,11 +14,11 @@
 
 #include "Paper/Paper.h"
 #include "DLList/DLList.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+// Fungsi untuk mencetak data Paper
 void print_paper(void *data)
 {
   Paper *paper = (Paper *)data;
@@ -52,6 +52,64 @@ void print_paper(void *data)
   }
 }
 
+// Fungsi untuk membandingkan dua Paper berdasarkan judul
+int compare_paper_by_title(const void *paper1, const void *paper2)
+{
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_title\n");
+    return 0;
+  }
+
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
+
+  if (p1->title == NULL || p2->title == NULL)
+  {
+    printf("Satu atau kedua judul NULL di compare_paper_by_title\n");
+    return 0;
+  }
+
+  return strcmp(p1->title, p2->title);
+}
+
+// Fungsi untuk membandingkan dua Paper berdasarkan tahun
+int compare_paper_by_year(const void *paper1, const void *paper2)
+{
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_year\n");
+    return 0;
+  }
+
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
+
+  return p1->year - p2->year;
+}
+
+// Fungsi untuk membandingkan dua Paper berdasarkan author
+int compare_paper_by_author(const void *paper1, const void *paper2)
+{
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_author\n");
+    return 0;
+  }
+
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
+
+  if (p1->authors[0] == NULL || p2->authors[0] == NULL)
+  {
+    printf("Satu atau kedua author NULL di compare_paper_by_author\n");
+    return 0;
+  }
+
+  return strcmp(p1->authors[0], p2->authors[0]); // Asumsi kita membandingkan penulis pertama
+}
+
+// Fungsi untuk membangun BSTree dari array Paper tanpa balancing
 void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
 {
   *tree = bstree_create();
@@ -77,91 +135,24 @@ void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compar
   }
 }
 
-void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
-{
-  *tree = bstree_create();
-  if (*tree == NULL)
-  {
-    printf("Error alokasi memori untuk BSTree\n");
-    return;
-  }
-  if (paper == NULL || n_papers <= 0 || compare == NULL)
-  {
-    printf("Parameter untuk build_bstree_paper invalid!\n");
-    return;
-  }
-
-  for (int i = 0; i < n_papers; i++)
-  {
-    if (paper[i] == NULL)
-    {
-      printf("Paper di index %d NULL\n", i);
-      continue;
-    }
-    bstree_insert_balance(*tree, paper[i], (int (*)(const void *, const void *))compare);
-  }
-}
-
-int compare_paper_by_title(const void *paper1, const void *paper2)
-{
-  if (paper1 == NULL || paper2 == NULL)
-  {
-    printf("Satu atau kedua paper NULL di compare_paper_by_title\n");
-    return 0;
-  }
-
-  // Cast void pointer ke Paper pointer
-  Paper *p1 = (Paper *)paper1;
-  Paper *p2 = (Paper *)paper2;
-
-  if (p1->title == NULL || p2->title == NULL)
-  {
-    printf("atu atau kedua judul NULL di compare_paper_by_title\n");
-    return 0;
-  }
-
-  return strcmp(p1->title, p2->title);
-}
-
-void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list)
-{
-  if (node == NULL)
-  {
-    return;
-  }
-
-  search_paper_by_title(node->left, title, paper_list);
-
-  Paper *paper = (Paper *)node->info;
-  if (strstr(paper->title, title) != NULL) // Mencari substring
-  {
-    dllist_insert_back(paper_list, paper);
-  }
-
-  search_paper_by_title(node->right, title, paper_list);
-}
-
+// Fungsi untuk mengambil data Paper yang populer berdasarkan jumlah sitasi dan memasukkannya ke dalam DLList sejumlah n
 void get_popular_papers(BSTreeNode *node, DLList **paper_list, int n)
 {
-  // traversal inorder untuk mendapatkan paper yang populer
-  // lalu cari yang memiliki sitasi terbanyak
-  // dan masukkan ke dalam DLList
   if (node == NULL || n <= 0)
   {
     return;
   }
+
   get_popular_papers(node->left, paper_list, n);
   Paper *paper = (Paper *)node->info;
   if (paper->in_citation_count > 0)
   {
-    // Cek apakah jumlah sitasi masuk lebih besar dari n
     if ((*paper_list)->size < n)
     {
       dllist_insert_back(paper_list, paper);
     }
     else
     {
-      // Jika sudah ada n paper, cek apakah paper ini lebih populer
       Paper *last_paper = (Paper *)(*paper_list)->tail->info;
       if (paper->in_citation_count > last_paper->in_citation_count)
       {
@@ -173,6 +164,7 @@ void get_popular_papers(BSTreeNode *node, DLList **paper_list, int n)
   get_popular_papers(node->right, paper_list, n);
 }
 
+// Fungsi untuk menampilkan detail Paper
 void show_paper_detail(const Paper *paper)
 {
   if (paper == NULL)
