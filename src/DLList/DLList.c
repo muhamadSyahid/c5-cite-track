@@ -61,15 +61,15 @@ void dllist_clear(DLList *list)
   list->size = 0;
 }
 
-void dllist_destroy(DLList **list_ref)
+void dllist_destroy(DLList *list_ref)
 {
-  if (list_ref == NULL || *list_ref == NULL)
+  if (list_ref == NULL)
   {
     return;
   }
-  dllist_clear(*list_ref); // Free all nodes
-  free(*list_ref);         // Free the list structure
-  *list_ref = NULL;        // Set the original pointer to NULL
+  dllist_clear(list_ref); // Free all nodes
+  free(list_ref);         // Free the list structure
+  list_ref = NULL;        // Set the original pointer to NULL
 }
 
 void dllist_insert_front(DLList **list, void *data)

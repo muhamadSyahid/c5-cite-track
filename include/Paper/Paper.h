@@ -32,6 +32,10 @@ typedef struct
   int author_count;       // jumlah author
 } Paper;
 
+extern int kunjungan;
+
+Paper *paper_create();
+
 void print_paper(void *data);
 
 // Fungsi membangun BSTree dari array Paper tanpa balancing
@@ -46,13 +50,21 @@ int compare_paper_by_year(const void *paper1, const void *paper2);
 // Fungsi untuk membandingkan dua Paper berdasarkan author
 int compare_paper_by_author(const void *paper1, const void *paper2);
 
+// fungsi untuk membandingkan dua Paper berdasarkan jumlah sitasi masuk secara descending
+int compare_papers_by_incitations_desc(const void *a, const void *b);
+
 // Fungsi untuk mencari Paper berdasarkan judul dan memasukkannya ke dalam DLList
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list);
 
+// mencari 1 paper berdasarkan judul
+Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title);
+
 // Fungsi untuk mengambil data Paper yang populer berdasarkan jumlah sitasi
 // dan memasukkannya ke dalam DLList sejumlah n
-void get_popular_papers(BSTreeNode *node, DLList **paper_list, int n);
+void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper_list, int n_top_papers);
 
 void show_paper_detail(const Paper *paper);
 
-#endif
+// fungsi untuk mengambil rentang tahun dari Paper
+int get_year_min(BSTreeNode *node);
+int get_year_max(BSTreeNode *node);

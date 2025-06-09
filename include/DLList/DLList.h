@@ -31,7 +31,7 @@ typedef struct
 } DLList;
 
 DLList *dllist_create();
-void dllist_destroy(DLList **list_ref);
+void dllist_destroy(DLList *list_ref);
 void dllist_clear(DLList *list);
 
 DLListNode *dllist_create_node(void *data);

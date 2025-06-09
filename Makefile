@@ -25,6 +25,7 @@ SRC = $(wildcard $(SRC_DIR)/*.c) \
       $(wildcard $(SRC_DIR)/BSTree/*.c) \
       $(wildcard $(SRC_DIR)/DLList/*.c) \
       $(wildcard $(SRC_DIR)/Paper/*.c) \
+      $(wildcard $(SRC_DIR)/Author/*.c) \
       $(wildcard $(SRC_DIR)/Parser/*.c)
 
 # Object files
@@ -41,6 +42,7 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)/BSTree
 	mkdir -p $(BUILD_DIR)/DLList
 	mkdir -p $(BUILD_DIR)/Paper
+	mkdir -p $(BUILD_DIR)/Author
 	mkdir -p $(BUILD_DIR)/Parser
 
 # Link object files to create executable
