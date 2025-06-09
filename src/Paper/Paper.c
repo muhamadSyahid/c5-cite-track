@@ -20,8 +20,6 @@
 #include <string.h>
 #include <limits.h>
 
-int kunjungan = 0;
-
 Paper *paper_create()
 {
   Paper *paper = (Paper *)malloc(sizeof(Paper));
@@ -158,25 +156,39 @@ int compare_paper_by_title(const void *paper1, const void *paper2)
 
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list)
 {
-  if (node == NULL)
+  if (node == NULL || node->info == NULL)
   {
     return;
   }
 
-  search_paper_by_title(node->left, title, paper_list);
-
-  Paper *paper = (Paper *)node->info;
-  if (strstr(paper->title, title) != NULL) // Mencari substring
+  Paper *current_paper = (Paper *)node->info;
+  if (current_paper->title == NULL)
   {
-    dllist_insert_back(paper_list, paper);
+    return;
   }
 
-  search_paper_by_title(node->right, title, paper_list);
+  size_t key_len = strlen(title);
+
+  int cmp = strncasecmp(title, current_paper->title, key_len);
+
+  if (cmp < 0)
+  {
+    search_paper_by_title(node->left, title, paper_list);
+  }
+  else if (cmp > 0)
+  {
+    search_paper_by_title(node->right, title, paper_list);
+  }
+  else
+  {
+    dllist_insert_back(paper_list, current_paper);
+    search_paper_by_title(node->left, title, paper_list);
+    search_paper_by_title(node->right, title, paper_list);
+  }
 }
 
 Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title)
 {
-  kunjungan++;
   if (node == NULL)
   {
     return NULL;
