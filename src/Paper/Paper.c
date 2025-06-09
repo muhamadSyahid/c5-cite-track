@@ -52,20 +52,37 @@ void print_paper(void *data)
   }
 }
 
-void search_paper_by_title(BSTreeNode *node, const char *title, DLList *paper_list)
+void search_paper_by_title(BSTreeNode *node, const char *title, DLListNode **paper_list)
 {
-  if (node == NULL)
+  if (node == NULL || node->info == NULL)
+  {
     return;
-
-  search_paper_by_title(node->left, title, paper_list);
-
-  Paper *paper = (Paper *)node->info;
-  if (strstr(paper->title, title) != NULL)
-  { // Mencari substring
-    insertLastDLList(paper_list, paper);
   }
 
-  search_paper_by_title(node->right, title, paper_list);
+  Paper *current_paper = (Paper *)node->info;
+  if (current_paper->title == NULL)
+  {
+    return;
+  }
+
+  size_t key_len = strlen(title);
+
+  int cmp = strncasecmp(title, current_paper->title, key_len);
+
+  if (cmp < 0)
+  {
+    search_paper_by_title(node->left, title, paper_list);
+  }
+  else if (cmp > 0)
+  {
+    search_paper_by_title(node->right, title, paper_list);
+  }
+  else
+  {
+    dllist_insert_back(paper_list, current_paper);
+    search_paper_by_title(node->left, title, paper_list);
+    search_paper_by_title(node->right, title, paper_list);
+  }
 }
 
 void show_paper_detail(const Paper *paper)
