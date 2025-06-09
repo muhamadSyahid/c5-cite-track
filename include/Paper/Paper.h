@@ -51,7 +51,7 @@ int compare_paper_by_year(const void *paper1, const void *paper2);
 int compare_paper_by_author(const void *paper1, const void *paper2);
 
 // fungsi untuk membandingkan dua Paper berdasarkan jumlah sitasi masuk secara descending
-int compare_papers_by_incitations_desc(const void *a, const void *b);
+int compare_paper_by_incitations_desc(const void *a, const void *b);
 
 // Fungsi untuk mencari Paper berdasarkan judul dan memasukkannya ke dalam DLList
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list);
@@ -71,3 +71,5 @@ void show_paper_detail(const Paper *paper);
 // fungsi untuk mengambil rentang tahun dari Paper
 int get_year_min(BSTreeNode *node);
 int get_year_max(BSTreeNode *node);
+
+#endif

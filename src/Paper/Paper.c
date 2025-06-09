@@ -188,10 +188,10 @@ int compare_paper_by_author(const void *paper1, const void *paper2)
   return strcmp(p1->authors[0], p2->authors[0]); // Asumsi kita membandingkan penulis pertama
 }
 
-int compare_papers_by_incitations_desc(const void *a, const void *b)
+int compare_paper_by_incitations_desc(const void *a, const void *b)
 {
-  Paper *paper_a = *(Paper **)a;
-  Paper *paper_b = *(Paper **)b;
+  const Paper *paper_a = a;
+  const Paper *paper_b = b;
 
   // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
   if (paper_a == NULL && paper_b == NULL)
@@ -268,7 +268,7 @@ void search_paper_by_author(BSTreeNode *node, const char *author_name, DLList **
         strncasecmp(current_paper->authors[i], author_name, key_len) == 0)
     {
       dllist_insert_back(paper_list, current_paper);
-      break; 
+      break;
     }
   }
 
@@ -299,6 +299,39 @@ Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title)
   {
     return search_exact_paper_by_title(node->right, title);
   }
+}
+
+static int qsort_compare_paper_by_incitations_desc(const void *a, const void *b)
+{
+  Paper *paper_a = *(Paper **)a;
+  Paper *paper_b = *(Paper **)b;
+
+  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
+  if (paper_a == NULL && paper_b == NULL)
+    return 0;
+  if (paper_a == NULL)
+    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+  if (paper_b == NULL)
+    return -1; // Anggap non-NULL lebih besar
+
+  // Urutkan berdasarkan in_citation_count secara descending
+  if (paper_a->in_citation_count < paper_b->in_citation_count)
+  {
+    return 1;
+  }
+  if (paper_a->in_citation_count > paper_b->in_citation_count)
+  {
+    return -1;
+  }
+
+  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
+  // Misalnya, berdasarkan tahun (terbaru dulu)
+  if (paper_a->year < paper_b->year)
+    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
+  if (paper_a->year > paper_b->year)
+    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
+
+  return 0;
 }
 
 void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper_list, int n_top_papers)
@@ -350,7 +383,7 @@ void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper
   }
 
   // Urutkan array berdasarkan in_citation_count secara descending
-  qsort(temp_array, n_papers, sizeof(Paper *), compare_papers_by_incitations_desc);
+  qsort(temp_array, n_papers, sizeof(Paper *), qsort_compare_paper_by_incitations_desc);
 
   // Masukkan N paper teratas ke DLList output
   int num_to_add = (n_top_papers < n_papers) ? n_top_papers : n_papers;
