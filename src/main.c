@@ -201,7 +201,7 @@ int main(int argc, char const *argv[])
       // Reset counter
       counter = 0;
 
-      get_popular_papers(papers_tree->root, &shown_paper_list, 10);
+      get_popular_papers(papers, n_papers, &shown_paper_list, 10);
       dllist_traverse_forward(shown_paper_list, print_title);
 
       display_paper_actions();

@@ -60,7 +60,7 @@ Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title);
 
 // fungsi untuk mengambil data Paper yang populer berdasarkan jumlah sitasi
 // dan memasukkannya ke dalam DLList sejumlah n
-void get_popular_papers(BSTreeNode *node, DLList **paper_list, int n);
+void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper_list, int n_top_papers);
 
 void show_paper_detail(const Paper *paper);
 

@@ -279,25 +279,25 @@ static int compare_papers_by_incitations_desc(const void *a, const void *b)
   return 0;
 }
 
-void get_popular_papers(BSTreeNode *root_node_of_papers_tree, DLList **output_paper_list, int n_top_papers)
+void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper_list, int n_top_papers)
 {
-  if (output_paper_list == NULL || n_top_papers <= 0)
+  // Validasi parameter
+  if (paper_array == NULL || n_papers <= 0 || output_paper_list == NULL || n_top_papers <= 0)
   {
-    fprintf(stderr, "Error: Parameter output_paper_list tidak valid atau n_top_papers <= 0.\n");
-    // Jika output_paper_list valid tapi *output_paper_list NULL, dan n_top_papers > 0,
-    // kita mungkin tetap ingin membuat list kosong.
+    fprintf(stderr, "Error: Parameter tidak valid (paper_array NULL, n_papers <= 0, output_paper_list NULL, atau n_top_papers <= 0).\n");
+    // Inisialisasi list kosong jika output_paper_list valid tapi *output_paper_list NULL
     if (output_paper_list && *output_paper_list == NULL && n_top_papers > 0)
     {
       *output_paper_list = dllist_create();
       if (*output_paper_list == NULL)
       {
-        fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list (kasus parameter invalid).\n");
+        fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list.\n");
       }
     }
     return;
   }
 
-  // Pastikan output_paper_list sudah diinisialisasi atau buat baru
+  // Pastikan output_paper_list sudah diinisialisasi
   if (*output_paper_list == NULL)
   {
     *output_paper_list = dllist_create();
@@ -309,53 +309,39 @@ void get_popular_papers(BSTreeNode *root_node_of_papers_tree, DLList **output_pa
   }
   else
   {
-    // Opsi: Bersihkan list jika mungkin sudah ada data lama dan kita ingin menggantinya.
-    // Ini tergantung pada apakah dllist_clear ada dan apa perilakunya (membebaskan node vs. data).
-    // Jika Anda ingin fungsi ini mengisi list yang mungkin sudah ada,
-    // pastikan untuk menghapus konten lama terlebih dahulu jika itu yang diinginkan.
-    // Misalnya: dllist_clear(*output_paper_list); (jika ada dan sesuai)
+    // Opsional: Bersihkan list jika sudah ada data lama
+    // dllist_clear(*output_paper_list); // Uncomment jika fungsi ini ada dan sesuai kebutuhan
   }
 
-  if (root_node_of_papers_tree == NULL)
+  // Buat salinan array untuk menghindari modifikasi array asli
+  Paper **temp_array = (Paper **)malloc(n_papers * sizeof(Paper *));
+  if (temp_array == NULL)
   {
-    // Tree kosong, tidak ada paper untuk diproses. List output akan tetap kosong (atau seperti setelah clear).
+    fprintf(stderr, "Error: Gagal alokasi memori untuk temp_array.\n");
     return;
   }
 
-  Paper **all_papers_array = NULL;
-  int paper_count = 0;
-  int array_capacity = 0; // Kapasitas awal akan diatur di collect_papers_recursive
-
-  collect_papers_recursive(root_node_of_papers_tree, &all_papers_array, &paper_count, &array_capacity);
-
-  if (paper_count == 0 || all_papers_array == NULL)
+  // Salin elemen dari paper_array ke temp_array
+  for (int i = 0; i < n_papers; i++)
   {
-    // Tidak ada paper yang terkumpul atau terjadi error saat pengumpulan
-    if (all_papers_array)
-    {
-      free(all_papers_array); // Bebaskan array jika sempat dialokasi
-    }
-    return; // List output akan kosong
+    temp_array[i] = paper_array[i];
   }
 
-  // Urutkan paper yang terkumpul berdasarkan in_citation_count secara descending
-  qsort(all_papers_array, paper_count, sizeof(Paper *), compare_papers_by_incitations_desc);
+  // Urutkan array berdasarkan in_citation_count secara descending
+  qsort(temp_array, n_papers, sizeof(Paper *), compare_papers_by_incitations_desc);
 
   // Masukkan N paper teratas ke DLList output
-  // Prototipe: void dllist_insert_back(DLList **list, void *data);
-  int num_to_add = (n_top_papers < paper_count) ? n_top_papers : paper_count;
+  int num_to_add = (n_top_papers < n_papers) ? n_top_papers : n_papers;
   for (int i = 0; i < num_to_add; i++)
   {
-    if (all_papers_array[i] != NULL)
-    { // Pemeriksaan keamanan
-      dllist_insert_back(output_paper_list, all_papers_array[i]);
-      // Asumsi: dllist_insert_back akan mengupdate (*output_paper_list)->size secara internal.
-      // Jika tidak, Anda perlu: (*output_paper_list)->size++;
+    if (temp_array[i] != NULL)
+    {
+      dllist_insert_back(output_paper_list, temp_array[i]);
     }
   }
 
-  // Bebaskan memori yang digunakan oleh array sementara
-  free(all_papers_array);
+  // Bebaskan memori temp_array
+  free(temp_array);
 }
 
 void show_paper_detail(const Paper *paper)
