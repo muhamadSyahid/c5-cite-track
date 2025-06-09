@@ -203,56 +203,53 @@ void dllist_traverse_backward(DLList *list, void (*visit)(void *data))
 void dllist_sort_asc(DLList **list, int (*compare)(const void *, const void *))
 {
   if (list == NULL || *list == NULL || (*list)->size <= 1)
-    return;
-
-  // Salin pointer data ke array
-  int n = (*list)->size;
-  void **arr = (void **)malloc(n * sizeof(void *));
-  if (arr == NULL)
-    return;
-
-  DLListNode *curr = (*list)->head;
-  for (int i = 0; i < n && curr != NULL; i++, curr = curr->next)
   {
-    arr[i] = curr->info;
+    return;
   }
 
-  qsort(arr, n, sizeof(void *), compare);
+  DLListNode *current;
+  DLListNode *index;
+  void *temp_info;
 
-  // Susun ulang list sesuai array terurut
-  curr = (*list)->head;
-  for (int i = 0; i < n && curr != NULL; i++, curr = curr->next)
+  for (current = (*list)->head; current != NULL; current = current->next)
   {
-    curr->info = arr[i];
+    for (index = current->next; index != NULL; index = index->next)
+    {
+      // Jika current->info lebih besar dari index->info, tukar isinya
+      // compare mengembalikan > 0 jika argumen pertama > argumen kedua untuk ascending
+      if (compare(current->info, index->info) > 0)
+      {
+        temp_info = current->info;
+        current->info = index->info;
+        index->info = temp_info;
+      }
+    }
   }
-
-  free(arr);
 }
 
 void dllist_sort_dsc(DLList **list, int (*compare)(const void *, const void *))
 {
   if (list == NULL || *list == NULL || (*list)->size <= 1)
-    return;
-
-  int n = (*list)->size;
-  void **arr = (void **)malloc(n * sizeof(void *));
-  if (arr == NULL)
-    return;
-
-  DLListNode *curr = (*list)->head;
-  for (int i = 0; i < n && curr != NULL; i++, curr = curr->next)
   {
-    arr[i] = curr->info;
+    return;
   }
 
-  qsort(arr, n, sizeof(void *), compare);
+  DLListNode *current;
+  DLListNode *index;
+  void *temp_info;
 
-  // Untuk descending, kita bisa balik array saat menyalin kembali
-  curr = (*list)->head;
-  for (int i = 0; i < n && curr != NULL; i++, curr = curr->next)
+  for (current = (*list)->head; current != NULL; current = current->next)
   {
-    curr->info = arr[n - 1 - i];
+    for (index = current->next; index != NULL; index = index->next)
+    {
+      // Jika current->info lebih kecil dari index->info, tukar isinya
+      // compare mengembalikan < 0 jika argumen pertama < argumen kedua untuk descending
+      if (compare(current->info, index->info) < 0)
+      {
+        temp_info = current->info;
+        current->info = index->info;
+        index->info = temp_info;
+      }
+    }
   }
-
-  free(arr);
 }
