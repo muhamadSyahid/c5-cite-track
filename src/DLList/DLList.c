@@ -67,9 +67,9 @@ void dllist_destroy(DLList *list_ref)
   {
     return;
   }
-  dllist_clear(list_ref); // Free all nodes
-  free(list_ref);         // Free the list structure
-  list_ref = NULL;        // Set the original pointer to NULL
+  dllist_clear(list_ref);
+  free(list_ref);
+  list_ref = NULL;
 }
 
 void dllist_insert_front(DLList **list, void *data)
@@ -95,7 +95,7 @@ void dllist_insert_front(DLList **list, void *data)
     (*list)->head->prev = newNode;
     (*list)->head = newNode;
   }
-  (*list)->size++; // Only one node
+  (*list)->size++;
 }
 
 void dllist_insert_back(DLList **list, void *data)

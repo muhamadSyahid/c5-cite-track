@@ -51,7 +51,6 @@ void search_array_paper_by_author(Paper **paper, int n_papers, const char *autho
     }
 }
 
-// Fungsi untuk membangun BSTree author dari array Paper tanpa balancing
 void build_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
 {
     if (*tree == NULL)
@@ -153,7 +152,6 @@ int compare_author_name(const void *author1, const void *author2)
     return strcmp(a1->name, a2->name);
 }
 
-// Fungsi untuk mencari author berdasarkan prefix dan memasukkannya ke dalam DLList
 void search_author(BSTreeNode *node, const char *prefix, DLList **author_list)
 {
     if (node == NULL)
@@ -186,7 +184,6 @@ void search_author(BSTreeNode *node, const char *prefix, DLList **author_list)
     }
 }
 
-// Fungsi untuk mencari daftar paper berdasarkan author dan memasukkannya ke dalam DLList
 void get_author_papers(BSTreeNode *node, const char *author, DLList **paper_list)
 {
     if (node == NULL)

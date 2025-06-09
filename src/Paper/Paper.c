@@ -193,13 +193,20 @@ int compare_paper_by_incitations_desc(const void *a, const void *b)
   const Paper *paper_a = a;
   const Paper *paper_b = b;
 
-  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
   if (paper_a == NULL && paper_b == NULL)
+  {
     return 0;
+  }
   if (paper_a == NULL)
-    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+  {
+    // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+    return 1;
+  }
   if (paper_b == NULL)
-    return -1; // Anggap non-NULL lebih besar
+  {
+    // Anggap non-NULL lebih besar
+    return -1;
+  }
 
   // Urutkan berdasarkan in_citation_count secara descending
   if (paper_a->in_citation_count < paper_b->in_citation_count)
@@ -211,12 +218,16 @@ int compare_paper_by_incitations_desc(const void *a, const void *b)
     return -1;
   }
 
-  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
-  // Misalnya, berdasarkan tahun (terbaru dulu)
+  // Kriteria pengurutan sekunder jika jumlah sitasi sama
+  // berdasarkan tahun (terbaru dulu)
   if (paper_a->year < paper_b->year)
-    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
+  {
+    return 1;
+  }
   if (paper_a->year > paper_b->year)
-    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
+  {
+    return -1;
+  }
 
   return 0;
 }
@@ -306,13 +317,20 @@ static int qsort_compare_paper_by_incitations_desc(const void *a, const void *b)
   Paper *paper_a = *(Paper **)a;
   Paper *paper_b = *(Paper **)b;
 
-  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
   if (paper_a == NULL && paper_b == NULL)
+  {
     return 0;
+  }
   if (paper_a == NULL)
-    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+  {
+    // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+    return 1;
+  }
   if (paper_b == NULL)
-    return -1; // Anggap non-NULL lebih besar
+  {
+    // Anggap non-NULL lebih besar
+    return -1;
+  }
 
   // Urutkan berdasarkan in_citation_count secara descending
   if (paper_a->in_citation_count < paper_b->in_citation_count)
@@ -324,12 +342,16 @@ static int qsort_compare_paper_by_incitations_desc(const void *a, const void *b)
     return -1;
   }
 
-  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
-  // Misalnya, berdasarkan tahun (terbaru dulu)
+  // Kriteria pengurutan sekunder jika jumlah sitasi sama
+  // berdasarkan tahun (terbaru dulu)
   if (paper_a->year < paper_b->year)
-    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
+  {
+    return 1;
+  }
   if (paper_a->year > paper_b->year)
-    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
+  {
+    return -1;
+  }
 
   return 0;
 }
@@ -340,19 +362,10 @@ void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper
   if (paper_array == NULL || n_papers <= 0 || output_paper_list == NULL || n_top_papers <= 0)
   {
     fprintf(stderr, "Error: Parameter tidak valid (paper_array NULL, n_papers <= 0, output_paper_list NULL, atau n_top_papers <= 0).\n");
-    // Inisialisasi list kosong jika output_paper_list valid tapi *output_paper_list NULL
-    if (output_paper_list && *output_paper_list == NULL && n_top_papers > 0)
-    {
-      *output_paper_list = dllist_create();
-      if (*output_paper_list == NULL)
-      {
-        fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list.\n");
-      }
-    }
+
     return;
   }
 
-  // Pastikan output_paper_list sudah diinisialisasi
   if (*output_paper_list == NULL)
   {
     *output_paper_list = dllist_create();
@@ -361,11 +374,6 @@ void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper
       fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list.\n");
       return;
     }
-  }
-  else
-  {
-    // Opsional: Bersihkan list jika sudah ada data lama
-    // dllist_clear(*output_paper_list); // Uncomment jika fungsi ini ada dan sesuai kebutuhan
   }
 
   // Buat salinan array untuk menghindari modifikasi array asli
