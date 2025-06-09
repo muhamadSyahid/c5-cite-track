@@ -6,7 +6,8 @@
 ///
 /// Dibuat oleh : Hanifidin Ibrahim     (241511076)
 ///               Helga Athifa Hidayat  (241511077)
-///               Hisyam Khaeru Umam    (241511080)
+///               Hisyam Khaeru Umam    (241511078)
+///               Ikhsan Satriadi       (241511080)
 ///               Muhamad Syahid        (241511081)
 ///
 /// Tanggal     : 03-06-2025
@@ -112,7 +113,6 @@ bool is_author_exist(BSTreeNode *node, const char *author)
         return false;
     }
 
-    // Untuk efisiensi, gunakan logika BST search
     int cmp = strcmp(author, a->name); // Membandingkan author yang dicari dengan nama author di node
 
     if (cmp == 0) // Jika cocok persis
