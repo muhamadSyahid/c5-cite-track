@@ -29,4 +29,33 @@ typedef struct
   int size;
 } BSTree;
 
+BSTree *bstree_create();
+
+void bstree_destroy(BSTree *tree);
+
+BSTreeNode *bstree_create_node(void *info);
+
+void bstree_destroy_nodes(BSTreeNode *node);
+
+// insert tanpa balancing
+void bstree_insert(BSTree *tree, void *info, int (*compare)(const void *, const void *));
+
+int bstree_get_height(BSTreeNode *node);
+
+int max(int a, int b);
+
+int bstree_get_balance(BSTreeNode *node);
+
+BSTreeNode *bstree_right_rotate(BSTreeNode *y);
+
+BSTreeNode *bstree_left_rotate(BSTreeNode *x);
+
+BSTreeNode *bstree_insert_node_avl(BSTreeNode *node, void *info, int (*compare)(const void *, const void *));
+
+// insert dengan balancing AVL
+void bstree_insert_balance(BSTree *tree, void *info, int (*compare)(const void *, const void *));
+
+// Fungsi untuk melakukan traversal in-order pada BSTree secara rekursif
+void bstree_in_order_traversal(BSTreeNode *node, void (*visit)(void *));
+
 #endif
