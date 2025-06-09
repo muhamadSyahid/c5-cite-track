@@ -91,7 +91,7 @@ char *get_json_string(const char *file)
 
 Paper *get_paper_from_json(const char *json_str)
 {
-  Paper *paper = (Paper *)calloc(1, sizeof(Paper));
+  Paper *paper = paper_create();
   if (paper == NULL)
   {
     printf("Alokasi memori untuk Paper gagal.\n");
