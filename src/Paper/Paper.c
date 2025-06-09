@@ -154,6 +154,73 @@ int compare_paper_by_title(const void *paper1, const void *paper2)
   return strcmp(p1->title, p2->title);
 }
 
+int compare_paper_by_year(const void *paper1, const void *paper2)
+{
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_year\n");
+    return 0;
+  }
+
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
+
+  return p1->year - p2->year;
+}
+
+int compare_paper_by_author(const void *paper1, const void *paper2)
+{
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_author\n");
+    return 0;
+  }
+
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
+
+  if (p1->authors[0] == NULL || p2->authors[0] == NULL)
+  {
+    printf("Satu atau kedua author NULL di compare_paper_by_author\n");
+    return 0;
+  }
+
+  return strcmp(p1->authors[0], p2->authors[0]); // Asumsi kita membandingkan penulis pertama
+}
+
+int compare_papers_by_incitations_desc(const void *a, const void *b)
+{
+  Paper *paper_a = *(Paper **)a;
+  Paper *paper_b = *(Paper **)b;
+
+  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
+  if (paper_a == NULL && paper_b == NULL)
+    return 0;
+  if (paper_a == NULL)
+    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+  if (paper_b == NULL)
+    return -1; // Anggap non-NULL lebih besar
+
+  // Urutkan berdasarkan in_citation_count secara descending
+  if (paper_a->in_citation_count < paper_b->in_citation_count)
+  {
+    return 1;
+  }
+  if (paper_a->in_citation_count > paper_b->in_citation_count)
+  {
+    return -1;
+  }
+
+  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
+  // Misalnya, berdasarkan tahun (terbaru dulu)
+  if (paper_a->year < paper_b->year)
+    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
+  if (paper_a->year > paper_b->year)
+    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
+
+  return 0;
+}
+
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list)
 {
   if (node == NULL || node->info == NULL)
@@ -187,6 +254,28 @@ void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_l
   }
 }
 
+void search_paper_by_author(BSTreeNode *node, const char *author_name, DLList **paper_list)
+{
+  if (node == NULL || node->info == NULL || author_name == NULL)
+    return;
+
+  Paper *current_paper = (Paper *)node->info;
+  size_t key_len = strlen(author_name);
+
+  for (int i = 0; i < current_paper->author_count; i++)
+  {
+    if (current_paper->authors[i] != NULL &&
+        strncasecmp(current_paper->authors[i], author_name, key_len) == 0)
+    {
+      dllist_insert_back(paper_list, current_paper);
+      break; 
+    }
+  }
+
+  search_paper_by_author(node->left, author_name, paper_list);
+  search_paper_by_author(node->right, author_name, paper_list);
+}
+
 Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title)
 {
   if (node == NULL)
@@ -212,92 +301,25 @@ Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title)
   }
 }
 
-// Fungsi rekursif untuk mengumpulkan semua paper dari BST ke dalam array.static
-void collect_papers_recursive(BSTreeNode *current_node, Paper ***papers_array_ptr, int *count_ptr, int *capacity_ptr)
+void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper_list, int n_top_papers)
 {
-  if (current_node == NULL)
+  // Validasi parameter
+  if (paper_array == NULL || n_papers <= 0 || output_paper_list == NULL || n_top_papers <= 0)
   {
-    return;
-  }
-
-  // Traversal in-order (kiri, proses, kanan)
-  collect_papers_recursive(current_node->left, papers_array_ptr, count_ptr, capacity_ptr);
-
-  if (current_node->info != NULL)
-  {
-    if (*count_ptr >= *capacity_ptr)
-    {
-      int new_capacity = (*capacity_ptr == 0) ? 10 : *capacity_ptr * 2; // Kapasitas awal atau gandakan
-      Paper **temp = (Paper **)realloc(*papers_array_ptr, new_capacity * sizeof(Paper *));
-      if (temp == NULL)
-      {
-        fprintf(stderr, "Error: Gagal realokasi memori untuk array paper dalam collect_papers_recursive.\n");
-        // Bisa dipertimbangkan untuk menghentikan pengumpulan atau keluar
-        return;
-      }
-      *papers_array_ptr = temp;
-      *capacity_ptr = new_capacity;
-    }
-    (*papers_array_ptr)[*count_ptr] = (Paper *)current_node->info;
-    (*count_ptr)++;
-  }
-
-  collect_papers_recursive(current_node->right, papers_array_ptr, count_ptr, capacity_ptr);
-}
-
-// Fungsi pembanding untuk qsort, mengurutkan Paper berdasarkan in_citation_count secara descending.
-static int compare_papers_by_incitations_desc(const void *a, const void *b)
-{
-  Paper *paper_a = *(Paper **)a;
-  Paper *paper_b = *(Paper **)b;
-
-  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
-  if (paper_a == NULL && paper_b == NULL)
-    return 0;
-  if (paper_a == NULL)
-    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
-  if (paper_b == NULL)
-    return -1; // Anggap non-NULL lebih besar
-
-  // Urutkan berdasarkan in_citation_count secara descending
-  if (paper_a->in_citation_count < paper_b->in_citation_count)
-  {
-    return 1;
-  }
-  if (paper_a->in_citation_count > paper_b->in_citation_count)
-  {
-    return -1;
-  }
-
-  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
-  // Misalnya, berdasarkan tahun (terbaru dulu)
-  if (paper_a->year < paper_b->year)
-    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
-  if (paper_a->year > paper_b->year)
-    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
-
-  return 0;
-}
-
-void get_popular_papers(BSTreeNode *root_node_of_papers_tree, DLList **output_paper_list, int n_top_papers)
-{
-  if (output_paper_list == NULL || n_top_papers <= 0)
-  {
-    fprintf(stderr, "Error: Parameter output_paper_list tidak valid atau n_top_papers <= 0.\n");
-    // Jika output_paper_list valid tapi *output_paper_list NULL, dan n_top_papers > 0,
-    // kita mungkin tetap ingin membuat list kosong.
+    fprintf(stderr, "Error: Parameter tidak valid (paper_array NULL, n_papers <= 0, output_paper_list NULL, atau n_top_papers <= 0).\n");
+    // Inisialisasi list kosong jika output_paper_list valid tapi *output_paper_list NULL
     if (output_paper_list && *output_paper_list == NULL && n_top_papers > 0)
     {
       *output_paper_list = dllist_create();
       if (*output_paper_list == NULL)
       {
-        fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list (kasus parameter invalid).\n");
+        fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list.\n");
       }
     }
     return;
   }
 
-  // Pastikan output_paper_list sudah diinisialisasi atau buat baru
+  // Pastikan output_paper_list sudah diinisialisasi
   if (*output_paper_list == NULL)
   {
     *output_paper_list = dllist_create();
@@ -309,53 +331,39 @@ void get_popular_papers(BSTreeNode *root_node_of_papers_tree, DLList **output_pa
   }
   else
   {
-    // Opsi: Bersihkan list jika mungkin sudah ada data lama dan kita ingin menggantinya.
-    // Ini tergantung pada apakah dllist_clear ada dan apa perilakunya (membebaskan node vs. data).
-    // Jika Anda ingin fungsi ini mengisi list yang mungkin sudah ada,
-    // pastikan untuk menghapus konten lama terlebih dahulu jika itu yang diinginkan.
-    // Misalnya: dllist_clear(*output_paper_list); (jika ada dan sesuai)
+    // Opsional: Bersihkan list jika sudah ada data lama
+    // dllist_clear(*output_paper_list); // Uncomment jika fungsi ini ada dan sesuai kebutuhan
   }
 
-  if (root_node_of_papers_tree == NULL)
+  // Buat salinan array untuk menghindari modifikasi array asli
+  Paper **temp_array = (Paper **)malloc(n_papers * sizeof(Paper *));
+  if (temp_array == NULL)
   {
-    // Tree kosong, tidak ada paper untuk diproses. List output akan tetap kosong (atau seperti setelah clear).
+    fprintf(stderr, "Error: Gagal alokasi memori untuk temp_array.\n");
     return;
   }
 
-  Paper **all_papers_array = NULL;
-  int paper_count = 0;
-  int array_capacity = 0; // Kapasitas awal akan diatur di collect_papers_recursive
-
-  collect_papers_recursive(root_node_of_papers_tree, &all_papers_array, &paper_count, &array_capacity);
-
-  if (paper_count == 0 || all_papers_array == NULL)
+  // Salin elemen dari paper_array ke temp_array
+  for (int i = 0; i < n_papers; i++)
   {
-    // Tidak ada paper yang terkumpul atau terjadi error saat pengumpulan
-    if (all_papers_array)
-    {
-      free(all_papers_array); // Bebaskan array jika sempat dialokasi
-    }
-    return; // List output akan kosong
+    temp_array[i] = paper_array[i];
   }
 
-  // Urutkan paper yang terkumpul berdasarkan in_citation_count secara descending
-  qsort(all_papers_array, paper_count, sizeof(Paper *), compare_papers_by_incitations_desc);
+  // Urutkan array berdasarkan in_citation_count secara descending
+  qsort(temp_array, n_papers, sizeof(Paper *), compare_papers_by_incitations_desc);
 
   // Masukkan N paper teratas ke DLList output
-  // Prototipe: void dllist_insert_back(DLList **list, void *data);
-  int num_to_add = (n_top_papers < paper_count) ? n_top_papers : paper_count;
+  int num_to_add = (n_top_papers < n_papers) ? n_top_papers : n_papers;
   for (int i = 0; i < num_to_add; i++)
   {
-    if (all_papers_array[i] != NULL)
-    { // Pemeriksaan keamanan
-      dllist_insert_back(output_paper_list, all_papers_array[i]);
-      // Asumsi: dllist_insert_back akan mengupdate (*output_paper_list)->size secara internal.
-      // Jika tidak, Anda perlu: (*output_paper_list)->size++;
+    if (temp_array[i] != NULL)
+    {
+      dllist_insert_back(output_paper_list, temp_array[i]);
     }
   }
 
-  // Bebaskan memori yang digunakan oleh array sementara
-  free(all_papers_array);
+  // Bebaskan memori temp_array
+  free(temp_array);
 }
 
 void show_paper_detail(const Paper *paper)

@@ -113,15 +113,19 @@ bool is_author_exist(BSTreeNode *node, const char *author)
         return false;
     }
 
-    if (strcmp(a->name, author) == 0 ||
-        is_author_exist(node->left, author) ||
-        is_author_exist(node->right, author))
+    int cmp = strcmp(author, a->name); // Membandingkan author yang dicari dengan nama author di node
+
+    if (cmp == 0) // Jika cocok persis
     {
         return true;
     }
-    else
+    else if (cmp < 0) // Jika author yang dicari lebih kecil, cek subtree kiri
     {
-        return false;
+        return is_author_exist(node->left, author);
+    }
+    else // Jika author yang dicari lebih besar, cek subtree kanan
+    {
+        return is_author_exist(node->right, author);
     }
 }
 
@@ -145,22 +149,37 @@ int compare_author_name(const void *author1, const void *author2)
     return strcmp(a1->name, a2->name);
 }
 
-void search_author(BSTreeNode *node, const char *author, DLList **author_list)
+// Fungsi untuk mencari author berdasarkan prefix dan memasukkannya ke dalam DLList
+void search_author(BSTreeNode *node, const char *prefix, DLList **author_list)
 {
     if (node == NULL)
     {
         return;
     }
 
-    search_author(node->left, author, author_list);
-
     Author *a = (Author *)node->info;
-    if (strstr(a->name, author) != NULL) // Mencari substring
+    size_t prefix_len = strlen(prefix);
+
+    // Membandingkan prefix dengan nama author di node
+    int cmp_left = strncmp(prefix, a->name, prefix_len);
+    // Periksa apakah nama author node saat ini dimulai dengan prefix yang dicari
+    bool starts_with_prefix = (cmp_left == 0 && strlen(a->name) >= prefix_len);
+
+    if (cmp_left < 0 || starts_with_prefix)
+    {
+        search_author(node->left, prefix, author_list);
+    }
+
+    // Jika nama author saat ini dimulai dengan prefix yang dicari, tambahkan ke list
+    if (starts_with_prefix)
     {
         dllist_insert_back(author_list, a);
     }
 
-    search_author(node->right, author, author_list);
+    if (cmp_left > 0 || starts_with_prefix)
+    {
+        search_author(node->right, prefix, author_list);
+    }
 }
 
 // Fungsi untuk mencari daftar paper berdasarkan author dan memasukkannya ke dalam DLList
@@ -172,7 +191,9 @@ void get_author_papers(BSTreeNode *node, const char *author, DLList **paper_list
     }
 
     Author *current_author = (Author *)node->info;
-    if (strcmp(current_author->name, author) == 0)
+    int cmp = strcmp(author, current_author->name); // Gunakan strcmp untuk pencarian eksak
+
+    if (cmp == 0)
     {
         // Jika penulis ditemukan, masukkan paper ke dalam DLList
         DLListNode *node_paper = current_author->papers->head;
@@ -182,7 +203,12 @@ void get_author_papers(BSTreeNode *node, const char *author, DLList **paper_list
             node_paper = node_paper->next;
         }
     }
-
-    get_author_papers(node->left, author, paper_list);
-    get_author_papers(node->right, author, paper_list);
+    else if (cmp < 0)
+    {
+        get_author_papers(node->left, author, paper_list);
+    }
+    else
+    {
+        get_author_papers(node->right, author, paper_list);
+    }
 }
