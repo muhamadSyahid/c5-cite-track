@@ -254,6 +254,28 @@ void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_l
   }
 }
 
+void search_paper_by_author(BSTreeNode *node, const char *author_name, DLList **paper_list)
+{
+  if (node == NULL || node->info == NULL || author_name == NULL)
+    return;
+
+  Paper *current_paper = (Paper *)node->info;
+  size_t key_len = strlen(author_name);
+
+  for (int i = 0; i < current_paper->author_count; i++)
+  {
+    if (current_paper->authors[i] != NULL &&
+        strncasecmp(current_paper->authors[i], author_name, key_len) == 0)
+    {
+      dllist_insert_back(paper_list, current_paper);
+      break; 
+    }
+  }
+
+  search_paper_by_author(node->left, author_name, paper_list);
+  search_paper_by_author(node->right, author_name, paper_list);
+}
+
 Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title)
 {
   if (node == NULL)

@@ -56,6 +56,9 @@ int compare_papers_by_incitations_desc(const void *a, const void *b);
 // Fungsi untuk mencari Paper berdasarkan judul dan memasukkannya ke dalam DLList
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list);
 
+// fungsi untuk mencari Paper berdasarkan nama author dengan prefix match
+void search_paper_by_author(BSTreeNode *node, const char *author_name, DLList **paper_list);
+
 // mencari 1 paper berdasarkan judul
 Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title);
 
