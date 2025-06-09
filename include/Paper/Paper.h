@@ -51,6 +51,9 @@ void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int 
 // fungsi untuk membandingkan dua Paper berdasarkan judul
 int compare_paper_by_title(const void *paper1, const void *paper2);
 
+// fungsi untuk membandingkan dua Paper berdasarkan jumlah sitasi masuk secara descending
+int compare_papers_by_incitations_desc(const void *a, const void *b);
+
 // fungsi untuk mencari Paper berdasarkan judul yang mirip dan memasukkannya ke dalam DLList
 // menggunakan in order traversal
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list);
@@ -67,14 +70,5 @@ void show_paper_detail(const Paper *paper);
 // fungsi untuk mengambil rentang tahun dari Paper
 int get_year_min(BSTreeNode *node);
 int get_year_max(BSTreeNode *node);
-
-//menyimpan BST ke DLL
-void fill_papers_list(BSTreeNode *node, DLList *list);
-
-//mengurutkan papers berdasarkan popularitas(jumlah incitationnya)
-void sort_papers_by_popularity(DLList *list);
-
-//menampilkan semua paper yang sudah terurut
-void show_all_papers_by_popularity();
 
 #endif

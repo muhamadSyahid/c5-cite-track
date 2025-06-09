@@ -154,6 +154,39 @@ int compare_paper_by_title(const void *paper1, const void *paper2)
   return strcmp(p1->title, p2->title);
 }
 
+int compare_papers_by_incitations_desc(const void *a, const void *b)
+{
+  Paper *paper_a = *(Paper **)a;
+  Paper *paper_b = *(Paper **)b;
+
+  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
+  if (paper_a == NULL && paper_b == NULL)
+    return 0;
+  if (paper_a == NULL)
+    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+  if (paper_b == NULL)
+    return -1; // Anggap non-NULL lebih besar
+
+  // Urutkan berdasarkan in_citation_count secara descending
+  if (paper_a->in_citation_count < paper_b->in_citation_count)
+  {
+    return 1;
+  }
+  if (paper_a->in_citation_count > paper_b->in_citation_count)
+  {
+    return -1;
+  }
+
+  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
+  // Misalnya, berdasarkan tahun (terbaru dulu)
+  if (paper_a->year < paper_b->year)
+    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
+  if (paper_a->year > paper_b->year)
+    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
+
+  return 0;
+}
+
 void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list)
 {
   if (node == NULL || node->info == NULL)
@@ -210,73 +243,6 @@ Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title)
   {
     return search_exact_paper_by_title(node->right, title);
   }
-}
-
-// Fungsi rekursif untuk mengumpulkan semua paper dari BST ke dalam array.static
-void collect_papers_recursive(BSTreeNode *current_node, Paper ***papers_array_ptr, int *count_ptr, int *capacity_ptr)
-{
-  if (current_node == NULL)
-  {
-    return;
-  }
-
-  // Traversal in-order (kiri, proses, kanan)
-  collect_papers_recursive(current_node->left, papers_array_ptr, count_ptr, capacity_ptr);
-
-  if (current_node->info != NULL)
-  {
-    if (*count_ptr >= *capacity_ptr)
-    {
-      int new_capacity = (*capacity_ptr == 0) ? 10 : *capacity_ptr * 2; // Kapasitas awal atau gandakan
-      Paper **temp = (Paper **)realloc(*papers_array_ptr, new_capacity * sizeof(Paper *));
-      if (temp == NULL)
-      {
-        fprintf(stderr, "Error: Gagal realokasi memori untuk array paper dalam collect_papers_recursive.\n");
-        // Bisa dipertimbangkan untuk menghentikan pengumpulan atau keluar
-        return;
-      }
-      *papers_array_ptr = temp;
-      *capacity_ptr = new_capacity;
-    }
-    (*papers_array_ptr)[*count_ptr] = (Paper *)current_node->info;
-    (*count_ptr)++;
-  }
-
-  collect_papers_recursive(current_node->right, papers_array_ptr, count_ptr, capacity_ptr);
-}
-
-// Fungsi pembanding untuk qsort, mengurutkan Paper berdasarkan in_citation_count secara descending.
-static int compare_papers_by_incitations_desc(const void *a, const void *b)
-{
-  Paper *paper_a = *(Paper **)a;
-  Paper *paper_b = *(Paper **)b;
-
-  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
-  if (paper_a == NULL && paper_b == NULL)
-    return 0;
-  if (paper_a == NULL)
-    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
-  if (paper_b == NULL)
-    return -1; // Anggap non-NULL lebih besar
-
-  // Urutkan berdasarkan in_citation_count secara descending
-  if (paper_a->in_citation_count < paper_b->in_citation_count)
-  {
-    return 1;
-  }
-  if (paper_a->in_citation_count > paper_b->in_citation_count)
-  {
-    return -1;
-  }
-
-  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
-  // Misalnya, berdasarkan tahun (terbaru dulu)
-  if (paper_a->year < paper_b->year)
-    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
-  if (paper_a->year > paper_b->year)
-    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
-
-  return 0;
 }
 
 void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper_list, int n_top_papers)
