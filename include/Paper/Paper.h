@@ -1,8 +1,7 @@
 /// Nama File   : Paper.h
 ///
 /// Deskripsi   : File header untuk ADT Paper yang memanfaatkan ADT
-///               Binary Search Tree untuk menyimpan data Author dan
-///               Double Linked List untuk menyimpan data Paper
+///               Binary Search Tree dan ADT Double Linked List
 ///
 /// Dibuat oleh : Hanifidin Ibrahim     (241511076)
 ///               Helga Athifa Hidayat  (241511077)
@@ -37,31 +36,37 @@ typedef struct
   int author_count; // jumlah author
 } Paper;
 
-/// Struct untuk menyimpan data Author di dalam BSTree
-typedef struct
-{
-  char *name;     // nama author
-  DLList *papers; // list Paper
-} Author;
+extern int kunjungan;
 
-/**
- * BSTree untuk menyimpan data Author
- * @note Penyimpanan data utama
- */
-extern BSTree *authors_tree;
+Paper *paper_create();
 
-/**
- * BSTree untuk menyimpan data Paper
- * @note Penyimpanan data utama
- */
-extern BSTree *papers_tree;
+void print_paper(void *data);
 
-/**
- * Double linked list untuk menyimpan data Paper untuk ditampilkan
- */
-extern DLList *papers_list;
+// fungsi membangun BSTree dari array Paper tanpa balancing
+void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
 
-void print_paper(const Paper *paper);
+// fungsi membangun BSTree dari array Paper dengan balancing AVL
+void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
+
+// fungsi untuk membandingkan dua Paper berdasarkan judul
+int compare_paper_by_title(const void *paper1, const void *paper2);
+
+// fungsi untuk mencari Paper berdasarkan judul yang mirip dan memasukkannya ke dalam DLList
+// menggunakan in order traversal
+void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list);
+
+// mencari 1 paper berdasarkan judul
+Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title);
+
+// fungsi untuk mengambil data Paper yang populer berdasarkan jumlah sitasi
+// dan memasukkannya ke dalam DLList sejumlah n
+void get_popular_papers(BSTreeNode *node, DLList **paper_list, int n);
+
+void show_paper_detail(const Paper *paper);
+
+// fungsi untuk mengambil rentang tahun dari Paper
+int get_year_min(BSTreeNode *node);
+int get_year_max(BSTreeNode *node);
 
 //menyimpan BST ke DLL
 void fill_papers_list(BSTreeNode *node, DLList *list);

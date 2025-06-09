@@ -13,18 +13,42 @@
 /// Tanggal     : 12-05-2025
 
 #include "Paper/Paper.h"
+#include "DLList/DLList.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <limits.h>
 
-BSTree *authors_tree = NULL;
-
-BSTree *papers_tree = NULL;
-
-DLList *papers_list = NULL;
-
-void print_paper(const Paper *paper)
+Paper *paper_create()
 {
+  Paper *paper = (Paper *)malloc(sizeof(Paper));
+  if (paper == NULL)
+  {
+    printf("Alokasi memori untuk Paper gagal.\n");
+    return NULL;
+  }
+
+  paper->id = NULL;
+  paper->title = NULL;
+  paper->paper_abstract = NULL;
+  paper->in_citations = NULL;
+  paper->out_citations = NULL;
+
+  paper->in_citation_count = 0;
+  paper->out_citation_count = 0;
+
+  paper->year = 0;
+  paper->authors = NULL;
+
+  paper->author_count = 0;
+
+  return paper;
+}
+
+void print_paper(void *data)
+{
+  Paper *paper = (Paper *)data;
   if (paper == NULL)
   {
     printf("Paper is NULL\n");
@@ -55,91 +79,386 @@ void print_paper(const Paper *paper)
   }
 }
 
-void fill_papers_list(BSTreeNode *node, DLList *list) {
-    if (!node) return;
-    fill_papers_list(node->left, list);
-
-    // Tambahkan paper ke list
-    Paper *p = (Paper *)node->info;
-    
-    DLListNode *new_node = (DLListNode *)malloc(sizeof(DLListNode));
-    new_node->info = p;
-    new_node->prev = list->tail;
-    new_node->next = NULL;
-
-    if (list->tail != NULL) {
-        list->tail->next = new_node;
-    } else {
-        list->head = new_node;
+void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
+{
+  *tree = bstree_create();
+  if (*tree == NULL)
+  {
+    *tree = bstree_create();
+    if (*tree == NULL)
+    {
+      printf("Error alokasi memori untuk BSTree\n");
+      return;
     }
-    list->tail = new_node;
-    list->size++;
+  }
+  if (paper == NULL || n_papers <= 0 || compare == NULL)
+  {
+    printf("Parameter untuk build_bstree_paper invalid!\n");
+    return;
+  }
 
-    fill_papers_list(node->right, list);
+  for (int i = 0; i < n_papers; i++)
+  {
+    if (paper[i] == NULL)
+    {
+      // printf("Paper di index %d NULL\n", i);
+      continue;
+    }
+    bstree_insert(*tree, paper[i], (int (*)(const void *, const void *))compare);
+  }
 }
 
-void sort_papers_by_popularity(DLList *list) {
-    if (list == NULL || list->size <= 1){
-        return;
-    }
+void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
+{
+  *tree = bstree_create();
+  if (*tree == NULL)
+  {
+    printf("Error alokasi memori untuk BSTree\n");
+    return;
+  }
+  if (paper == NULL || n_papers <= 0 || compare == NULL)
+  {
+    printf("Parameter untuk build_bstree_paper invalid!\n");
+    return;
+  }
 
-    for (DLListNode *i = list->head; i != NULL; i = i->next) {
-        DLListNode *max = i;
-        for (DLListNode *j = i->next; j != NULL; j = j->next) {
-            Paper *p1 = (Paper *)max->info;
-            Paper *p2 = (Paper *)j->info;
-            if (p2->in_citation_count > p1->in_citation_count) {
-                max = j;
-            }
-        }
-
-        if (max != i) {
-            void *temp = i->info;
-            i->info = max->info;
-            max->info = temp;
-        }
+  for (int i = 0; i < n_papers; i++)
+  {
+    if (paper[i] == NULL)
+    {
+      printf("Paper di index %d NULL\n", i);
+      continue;
     }
+    bstree_insert_balance(*tree, paper[i], (int (*)(const void *, const void *))compare);
+  }
 }
 
-void show_all_papers_by_popularity() {
-    // Bebaskan papers_list yang lama untuk mencegah memory leak
-    if (papers_list != NULL) {
-        DLListNode *current = papers_list->head;
-        while (current) {
-            DLListNode *temp = current;
-            current = current->next;
-            free(temp);
-        }
-        free(papers_list);
-    }
+int compare_paper_by_title(const void *paper1, const void *paper2)
+{
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_title\n");
+    return 0;
+  }
 
-    // Alokasi papers_list baru
-    papers_list = (DLList *)malloc(sizeof(DLList));
-    if (papers_list == NULL) {
-        fprintf(stderr, "Error: Gagal alokasi memori untuk papers_list\n");
-        return;
-    }
-    papers_list->head = papers_list->tail = NULL;
-    papers_list->size = 0;
+  // Cast void pointer ke Paper pointer
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
 
-    // Cek apakah papers_tree valid
-    if (papers_tree == NULL || papers_tree->root == NULL) {
-        printf("\n=== Tidak ada paper untuk ditampilkan ===\n");
-        free(papers_list);
-        return;
-    }
+  if (p1->title == NULL || p2->title == NULL)
+  {
+    printf("Satu atau kedua judul NULL di compare_paper_by_title\n");
+    return 0;
+  }
 
-    // Isi dan urutkan papers_list
-    fill_papers_list(papers_tree->root, papers_list);
-    sort_papers_by_popularity(papers_list);
-
-    // Cetak semua paper
-    printf("\n=== All Papers Sorted by Popularity ===\n");
-    for (DLListNode *node = papers_list->head; node != NULL; node = node->next) {
-        Paper *p = (Paper *)node->info;
-        if (p) {
-            print_paper(p);
-        }
-    }
+  return strcmp(p1->title, p2->title);
 }
 
+void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_list)
+{
+  if (node == NULL || node->info == NULL)
+  {
+    return;
+  }
+
+  Paper *current_paper = (Paper *)node->info;
+  if (current_paper->title == NULL)
+  {
+    return;
+  }
+
+  size_t key_len = strlen(title);
+
+  int cmp = strncasecmp(title, current_paper->title, key_len);
+
+  if (cmp < 0)
+  {
+    search_paper_by_title(node->left, title, paper_list);
+  }
+  else if (cmp > 0)
+  {
+    search_paper_by_title(node->right, title, paper_list);
+  }
+  else
+  {
+    dllist_insert_back(paper_list, current_paper);
+    search_paper_by_title(node->left, title, paper_list);
+    search_paper_by_title(node->right, title, paper_list);
+  }
+}
+
+Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title)
+{
+  if (node == NULL)
+  {
+    return NULL;
+  }
+
+  Paper *paper = (Paper *)node->info;
+
+  int compare = compare_paper_by_title(title, paper->title);
+
+  if (compare == 0)
+  {
+    return paper;
+  }
+  else if (compare < 0)
+  {
+    return search_exact_paper_by_title(node->left, title);
+  }
+  else
+  {
+    return search_exact_paper_by_title(node->right, title);
+  }
+}
+
+// Fungsi rekursif untuk mengumpulkan semua paper dari BST ke dalam array.static
+void collect_papers_recursive(BSTreeNode *current_node, Paper ***papers_array_ptr, int *count_ptr, int *capacity_ptr)
+{
+  if (current_node == NULL)
+  {
+    return;
+  }
+
+  // Traversal in-order (kiri, proses, kanan)
+  collect_papers_recursive(current_node->left, papers_array_ptr, count_ptr, capacity_ptr);
+
+  if (current_node->info != NULL)
+  {
+    if (*count_ptr >= *capacity_ptr)
+    {
+      int new_capacity = (*capacity_ptr == 0) ? 10 : *capacity_ptr * 2; // Kapasitas awal atau gandakan
+      Paper **temp = (Paper **)realloc(*papers_array_ptr, new_capacity * sizeof(Paper *));
+      if (temp == NULL)
+      {
+        fprintf(stderr, "Error: Gagal realokasi memori untuk array paper dalam collect_papers_recursive.\n");
+        // Bisa dipertimbangkan untuk menghentikan pengumpulan atau keluar
+        return;
+      }
+      *papers_array_ptr = temp;
+      *capacity_ptr = new_capacity;
+    }
+    (*papers_array_ptr)[*count_ptr] = (Paper *)current_node->info;
+    (*count_ptr)++;
+  }
+
+  collect_papers_recursive(current_node->right, papers_array_ptr, count_ptr, capacity_ptr);
+}
+
+// Fungsi pembanding untuk qsort, mengurutkan Paper berdasarkan in_citation_count secara descending.
+static int compare_papers_by_incitations_desc(const void *a, const void *b)
+{
+  Paper *paper_a = *(Paper **)a;
+  Paper *paper_b = *(Paper **)b;
+
+  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
+  if (paper_a == NULL && paper_b == NULL)
+    return 0;
+  if (paper_a == NULL)
+    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+  if (paper_b == NULL)
+    return -1; // Anggap non-NULL lebih besar
+
+  // Urutkan berdasarkan in_citation_count secara descending
+  if (paper_a->in_citation_count < paper_b->in_citation_count)
+  {
+    return 1;
+  }
+  if (paper_a->in_citation_count > paper_b->in_citation_count)
+  {
+    return -1;
+  }
+
+  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
+  // Misalnya, berdasarkan tahun (terbaru dulu)
+  if (paper_a->year < paper_b->year)
+    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
+  if (paper_a->year > paper_b->year)
+    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
+
+  return 0;
+}
+
+void get_popular_papers(BSTreeNode *root_node_of_papers_tree, DLList **output_paper_list, int n_top_papers)
+{
+  if (output_paper_list == NULL || n_top_papers <= 0)
+  {
+    fprintf(stderr, "Error: Parameter output_paper_list tidak valid atau n_top_papers <= 0.\n");
+    // Jika output_paper_list valid tapi *output_paper_list NULL, dan n_top_papers > 0,
+    // kita mungkin tetap ingin membuat list kosong.
+    if (output_paper_list && *output_paper_list == NULL && n_top_papers > 0)
+    {
+      *output_paper_list = dllist_create();
+      if (*output_paper_list == NULL)
+      {
+        fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list (kasus parameter invalid).\n");
+      }
+    }
+    return;
+  }
+
+  // Pastikan output_paper_list sudah diinisialisasi atau buat baru
+  if (*output_paper_list == NULL)
+  {
+    *output_paper_list = dllist_create();
+    if (*output_paper_list == NULL)
+    {
+      fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list.\n");
+      return;
+    }
+  }
+  else
+  {
+    // Opsi: Bersihkan list jika mungkin sudah ada data lama dan kita ingin menggantinya.
+    // Ini tergantung pada apakah dllist_clear ada dan apa perilakunya (membebaskan node vs. data).
+    // Jika Anda ingin fungsi ini mengisi list yang mungkin sudah ada,
+    // pastikan untuk menghapus konten lama terlebih dahulu jika itu yang diinginkan.
+    // Misalnya: dllist_clear(*output_paper_list); (jika ada dan sesuai)
+  }
+
+  if (root_node_of_papers_tree == NULL)
+  {
+    // Tree kosong, tidak ada paper untuk diproses. List output akan tetap kosong (atau seperti setelah clear).
+    return;
+  }
+
+  Paper **all_papers_array = NULL;
+  int paper_count = 0;
+  int array_capacity = 0; // Kapasitas awal akan diatur di collect_papers_recursive
+
+  collect_papers_recursive(root_node_of_papers_tree, &all_papers_array, &paper_count, &array_capacity);
+
+  if (paper_count == 0 || all_papers_array == NULL)
+  {
+    // Tidak ada paper yang terkumpul atau terjadi error saat pengumpulan
+    if (all_papers_array)
+    {
+      free(all_papers_array); // Bebaskan array jika sempat dialokasi
+    }
+    return; // List output akan kosong
+  }
+
+  // Urutkan paper yang terkumpul berdasarkan in_citation_count secara descending
+  qsort(all_papers_array, paper_count, sizeof(Paper *), compare_papers_by_incitations_desc);
+
+  // Masukkan N paper teratas ke DLList output
+  // Prototipe: void dllist_insert_back(DLList **list, void *data);
+  int num_to_add = (n_top_papers < paper_count) ? n_top_papers : paper_count;
+  for (int i = 0; i < num_to_add; i++)
+  {
+    if (all_papers_array[i] != NULL)
+    { // Pemeriksaan keamanan
+      dllist_insert_back(output_paper_list, all_papers_array[i]);
+      // Asumsi: dllist_insert_back akan mengupdate (*output_paper_list)->size secara internal.
+      // Jika tidak, Anda perlu: (*output_paper_list)->size++;
+    }
+  }
+
+  // Bebaskan memori yang digunakan oleh array sementara
+  free(all_papers_array);
+}
+
+void show_paper_detail(const Paper *paper)
+{
+  if (paper == NULL)
+  {
+    printf("Detail paper tidak tersedia (pointer NULL).\n");
+    return;
+  }
+
+  printf("--- Detail Paper ---\n");
+  printf("ID: %s\n", (paper->id != NULL) ? paper->id : "[Tidak Ada ID]");
+  printf("Judul: %s\n", (paper->title != NULL) ? paper->title : "[Tidak Ada Judul]");
+  printf("Tahun Publikasi: %d\n", paper->year);
+  printf("Abstrak:\n%s\n", (paper->paper_abstract != NULL) ? paper->paper_abstract : "[Tidak Ada Abstrak]");
+
+  // Menampilkan daftar penulis
+  if (paper->authors != NULL && paper->author_count > 0)
+  {
+    printf("Penulis:\n");
+    for (int i = 0; i < paper->author_count; i++)
+    {
+      printf("  %d. %s\n", i + 1, (paper->authors[i] != NULL) ? paper->authors[i] : "[Nama Penulis Tidak Tersedia]");
+    }
+  }
+  else
+  {
+    printf("Penulis: Tidak tersedia atau tidak ada.\n");
+  }
+
+  // Menampilkan sitasi masuk
+  if (paper->in_citations != NULL && paper->in_citation_count > 0)
+  {
+    printf("Sitasi Masuk (%d):\n", paper->in_citation_count);
+    for (int i = 0; i < paper->in_citation_count; i++)
+    {
+      printf("  - %s\n", (paper->in_citations[i] != NULL) ? paper->in_citations[i] : "[ID Sitasi Tidak Tersedia]");
+    }
+  }
+  else
+  {
+    printf("Sitasi Masuk: Tidak ada.\n");
+  }
+
+  // Menampilkan sitasi keluar
+  if (paper->out_citations != NULL && paper->out_citation_count > 0)
+  {
+    printf("Sitasi Keluar (%d):\n", paper->out_citation_count);
+    for (int i = 0; i < paper->out_citation_count; i++)
+    {
+      printf("  - %s\n", (paper->out_citations[i] != NULL) ? paper->out_citations[i] : "[ID Sitasi Tidak Tersedia]");
+    }
+  }
+  else
+  {
+    printf("Sitasi Keluar: Tidak ada.\n");
+  }
+}
+
+int get_year_min(BSTreeNode *node)
+{
+  if (node == NULL)
+  {
+    return INT_MAX;
+  }
+
+  int min_year = node->info ? ((Paper *)node->info)->year : INT_MAX;
+
+  int left_min = get_year_min(node->left);
+  int right_min = get_year_min(node->right);
+
+  if (left_min < min_year)
+  {
+    min_year = left_min;
+  }
+  if (right_min < min_year)
+  {
+    min_year = right_min;
+  }
+
+  return min_year;
+}
+
+int get_year_max(BSTreeNode *node)
+{
+  if (node == NULL)
+  {
+    return INT_MIN;
+  }
+
+  int max_year = node->info ? ((Paper *)node->info)->year : INT_MIN;
+
+  int left_max = get_year_max(node->left);
+  int right_max = get_year_max(node->right);
+
+  if (left_max > max_year)
+  {
+    max_year = left_max;
+  }
+  if (right_max > max_year)
+  {
+    max_year = right_max;
+  }
+
+  return max_year;
+}
