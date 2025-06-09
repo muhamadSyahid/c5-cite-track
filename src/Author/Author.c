@@ -89,11 +89,15 @@ void build_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compa
 
                 strcpy(new_author->name, paper[i]->authors[j]);
 
+                // cari papers berdasarkan penulis, masukkan paper ke dalam DLList
                 search_array_paper_by_author(paper, n_papers, new_author->name, &new_author_papers);
+
+                // Urutkan daftar paper berdasarkan in_citation_count secara descending
+                dllist_sort_dsc(&new_author_papers, compare_paper_by_incitations_desc);
 
                 new_author->papers = new_author_papers;
 
-                bstree_insert(*tree, new_author, (int (*)(const void *, const void *))compare);
+                bstree_insert(*tree, new_author, compare);
             }
         }
     }
