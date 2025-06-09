@@ -154,6 +154,40 @@ int compare_paper_by_title(const void *paper1, const void *paper2)
   return strcmp(p1->title, p2->title);
 }
 
+int compare_paper_by_year(const void *paper1, const void *paper2)
+{
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_year\n");
+    return 0;
+  }
+
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
+
+  return p1->year - p2->year;
+}
+
+int compare_paper_by_author(const void *paper1, const void *paper2)
+{
+  if (paper1 == NULL || paper2 == NULL)
+  {
+    printf("Satu atau kedua paper NULL di compare_paper_by_author\n");
+    return 0;
+  }
+
+  Paper *p1 = (Paper *)paper1;
+  Paper *p2 = (Paper *)paper2;
+
+  if (p1->authors[0] == NULL || p2->authors[0] == NULL)
+  {
+    printf("Satu atau kedua author NULL di compare_paper_by_author\n");
+    return 0;
+  }
+
+  return strcmp(p1->authors[0], p2->authors[0]); // Asumsi kita membandingkan penulis pertama
+}
+
 int compare_papers_by_incitations_desc(const void *a, const void *b)
 {
   Paper *paper_a = *(Paper **)a;
