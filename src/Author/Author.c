@@ -23,7 +23,8 @@ void print_author(void *data)
     Author *author = (Author *)data;
     if (author)
     {
-        printf("Author: %s\n", author->name);
+        printf("Nama Penulis: %s\n", author->name);
+        printf("Jumlah Paper: %d\n", author->papers->size);
     }
 }
 
@@ -163,7 +164,7 @@ void search_author(BSTreeNode *node, const char *prefix, DLList **author_list)
     size_t prefix_len = strlen(prefix);
 
     // Membandingkan prefix dengan nama author di node
-    int cmp_left = strncmp(prefix, a->name, prefix_len);
+    int cmp_left = strncasecmp(prefix, a->name, prefix_len);
     // Periksa apakah nama author node saat ini dimulai dengan prefix yang dicari
     bool starts_with_prefix = (cmp_left == 0 && strlen(a->name) >= prefix_len);
 
