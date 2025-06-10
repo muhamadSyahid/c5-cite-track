@@ -215,7 +215,7 @@ void dllist_sort_asc(DLList **list, int (*compare)(const void *, const void *))
   {
     for (index = current->next; index != NULL; index = index->next)
     {
-      if (compare(current->info, index->info) < 0)
+      if (compare(current->info, index->info) > 0)
       {
         temp_info = current->info;
         current->info = index->info;
@@ -240,7 +240,7 @@ void dllist_sort_dsc(DLList **list, int (*compare)(const void *, const void *))
   {
     for (index = current->next; index != NULL; index = index->next)
     {
-      if (compare(current->info, index->info) > 0)
+      if (compare(current->info, index->info) < 0)
       {
         temp_info = current->info;
         current->info = index->info;
