@@ -67,9 +67,9 @@ void dllist_destroy(DLList *list_ref)
   {
     return;
   }
-  dllist_clear(list_ref); // Free all nodes
-  free(list_ref);         // Free the list structure
-  list_ref = NULL;        // Set the original pointer to NULL
+  dllist_clear(list_ref);
+  free(list_ref);
+  list_ref = NULL;
 }
 
 void dllist_insert_front(DLList **list, void *data)
@@ -95,7 +95,7 @@ void dllist_insert_front(DLList **list, void *data)
     (*list)->head->prev = newNode;
     (*list)->head = newNode;
   }
-  (*list)->size++; // Only one node
+  (*list)->size++;
 }
 
 void dllist_insert_back(DLList **list, void *data)
@@ -215,7 +215,7 @@ void dllist_sort_asc(DLList **list, int (*compare)(const void *, const void *))
   {
     for (index = current->next; index != NULL; index = index->next)
     {
-      if (compare(current->info, index->info) < 0)
+      if (compare(current->info, index->info) > 0)
       {
         temp_info = current->info;
         current->info = index->info;
@@ -240,7 +240,7 @@ void dllist_sort_dsc(DLList **list, int (*compare)(const void *, const void *))
   {
     for (index = current->next; index != NULL; index = index->next)
     {
-      if (compare(current->info, index->info) > 0)
+      if (compare(current->info, index->info) < 0)
       {
         temp_info = current->info;
         current->info = index->info;

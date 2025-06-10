@@ -55,27 +55,42 @@ void print_paper(void *data)
     return;
   }
 
+  printf("\n==================================================\n");
+  printf("                   DETAIL PAPER\n");
+  printf("==================================================\n");
   printf("ID: %s\n", paper->id);
-  printf("Title: %s\n", paper->title);
-  printf("Abstract: %s\n", paper->paper_abstract);
-  printf("Year: %d\n", paper->year);
-
-  printf("Authors:\n");
+  printf("Judul: %s\n", paper->title);
+  printf("Tahun: %d\n", paper->year);
+  printf("\nPenulis (%d):\n", paper->author_count);
   for (int i = 0; i < paper->author_count; i++)
   {
-    printf("- %s\n", paper->authors[i]);
+    printf("  - %s\n", paper->authors[i]);
+  }
+  printf("\nAbstrak: %s\n", paper->paper_abstract);
+  printf("\nJumlah Sitasi Masuk: %d\n", paper->in_citation_count);
+  printf("Jumlah Sitasi Keluar: %d\n", paper->out_citation_count);
+  printf("--------------------------------------------------\n");
+}
+
+void print_paper_citations(void *data)
+{
+  Paper *paper = (Paper *)data;
+  if (paper == NULL)
+  {
+    printf("Paper is NULL\n");
+    return;
   }
 
-  printf("In Citations:\n");
+  printf("\nIn Citations:\n");
   for (int i = 0; i < paper->in_citation_count; i++)
   {
-    printf("- %s\n", paper->in_citations[i]);
+    printf("  - %s\n", paper->in_citations[i]);
   }
 
-  printf("Out Citations:\n");
+  printf("\nOut Citations:\n");
   for (int i = 0; i < paper->out_citation_count; i++)
   {
-    printf("- %s\n", paper->out_citations[i]);
+    printf("  - %s\n", paper->out_citations[i]);
   }
 }
 
@@ -181,7 +196,7 @@ int compare_paper_by_author(const void *paper1, const void *paper2)
 
   if (p1->authors[0] == NULL || p2->authors[0] == NULL)
   {
-    printf("Satu atau kedua author NULL di compare_paper_by_author\n");
+    // printf("Satu atau kedua author NULL di compare_paper_by_author\n");
     return 0;
   }
 
@@ -193,13 +208,20 @@ int compare_paper_by_incitations_desc(const void *a, const void *b)
   const Paper *paper_a = a;
   const Paper *paper_b = b;
 
-  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
   if (paper_a == NULL && paper_b == NULL)
+  {
     return 0;
+  }
   if (paper_a == NULL)
-    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+  {
+    // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+    return 1;
+  }
   if (paper_b == NULL)
-    return -1; // Anggap non-NULL lebih besar
+  {
+    // Anggap non-NULL lebih besar
+    return -1;
+  }
 
   // Urutkan berdasarkan in_citation_count secara descending
   if (paper_a->in_citation_count < paper_b->in_citation_count)
@@ -211,12 +233,16 @@ int compare_paper_by_incitations_desc(const void *a, const void *b)
     return -1;
   }
 
-  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
-  // Misalnya, berdasarkan tahun (terbaru dulu)
+  // Kriteria pengurutan sekunder jika jumlah sitasi sama
+  // berdasarkan tahun (terbaru dulu)
   if (paper_a->year < paper_b->year)
-    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
+  {
+    return 1;
+  }
   if (paper_a->year > paper_b->year)
-    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
+  {
+    return -1;
+  }
 
   return 0;
 }
@@ -306,13 +332,20 @@ static int qsort_compare_paper_by_incitations_desc(const void *a, const void *b)
   Paper *paper_a = *(Paper **)a;
   Paper *paper_b = *(Paper **)b;
 
-  // Penanganan jika ada paper NULL (seharusnya tidak terjadi jika data valid)
   if (paper_a == NULL && paper_b == NULL)
+  {
     return 0;
+  }
   if (paper_a == NULL)
-    return 1; // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+  {
+    // Anggap NULL lebih kecil, jadi ditaruh di akhir (untuk descending)
+    return 1;
+  }
   if (paper_b == NULL)
-    return -1; // Anggap non-NULL lebih besar
+  {
+    // Anggap non-NULL lebih besar
+    return -1;
+  }
 
   // Urutkan berdasarkan in_citation_count secara descending
   if (paper_a->in_citation_count < paper_b->in_citation_count)
@@ -324,12 +357,16 @@ static int qsort_compare_paper_by_incitations_desc(const void *a, const void *b)
     return -1;
   }
 
-  // Kriteria pengurutan sekunder jika jumlah sitasi sama (opsional)
-  // Misalnya, berdasarkan tahun (terbaru dulu)
+  // Kriteria pengurutan sekunder jika jumlah sitasi sama
+  // berdasarkan tahun (terbaru dulu)
   if (paper_a->year < paper_b->year)
-    return 1; // tahun lebih kecil berarti lebih tua, taruh di belakang
+  {
+    return 1;
+  }
   if (paper_a->year > paper_b->year)
-    return -1; // tahun lebih besar berarti lebih baru, taruh di depan
+  {
+    return -1;
+  }
 
   return 0;
 }
@@ -340,19 +377,10 @@ void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper
   if (paper_array == NULL || n_papers <= 0 || output_paper_list == NULL || n_top_papers <= 0)
   {
     fprintf(stderr, "Error: Parameter tidak valid (paper_array NULL, n_papers <= 0, output_paper_list NULL, atau n_top_papers <= 0).\n");
-    // Inisialisasi list kosong jika output_paper_list valid tapi *output_paper_list NULL
-    if (output_paper_list && *output_paper_list == NULL && n_top_papers > 0)
-    {
-      *output_paper_list = dllist_create();
-      if (*output_paper_list == NULL)
-      {
-        fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list.\n");
-      }
-    }
+
     return;
   }
 
-  // Pastikan output_paper_list sudah diinisialisasi
   if (*output_paper_list == NULL)
   {
     *output_paper_list = dllist_create();
@@ -361,11 +389,6 @@ void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper
       fprintf(stderr, "Error: Gagal membuat DLList untuk output_paper_list.\n");
       return;
     }
-  }
-  else
-  {
-    // Opsional: Bersihkan list jika sudah ada data lama
-    // dllist_clear(*output_paper_list); // Uncomment jika fungsi ini ada dan sesuai kebutuhan
   }
 
   // Buat salinan array untuk menghindari modifikasi array asli
