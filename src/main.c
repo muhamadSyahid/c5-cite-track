@@ -40,15 +40,20 @@ void display_menu_and_stats();
 
 int main(int argc, char const *argv[])
 {
-  load_json_papers(&papers, &n_papers, "data/test.json");
+  load_json_papers(&papers, &n_papers, "data/s2orc_small_part_2.json");
 
   papers_tree = bstree_create();
   authors_tree = bstree_create();
   shown_paper_list = dllist_create();
   shown_author_list = dllist_create();
 
+  if (n_papers > 8000) {
+    printf("Limiting dataset to 8000 papers for testing\n");
+    n_papers = 8000;
+  }
+
   // Insert papers ke BSTree papers_tree
-  build_bstree_paper(&papers_tree, papers, n_papers, compare_paper_by_title);
+  build_balance_bstree_paper(&papers_tree, papers, n_papers, compare_paper_by_title);
 
   // Insert papers ke BSTree authors_tree
   build_bstree_author(&authors_tree, papers, n_papers, compare_author_name);

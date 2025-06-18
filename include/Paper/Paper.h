@@ -41,6 +41,9 @@ void print_paper_citations(void *data);
 // Fungsi membangun BSTree dari array Paper tanpa balancing
 void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
 
+// Fungsi membangun BSTree dari array Paper dengan balancing
+void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
+
 // Fungsi untuk membandingkan dua Paper berdasarkan judul
 int compare_paper_by_title(const void *paper1, const void *paper2);
 
