@@ -466,11 +466,11 @@ int get_year_min(BSTreeNode *node)
   int left_min = get_year_min(node->left);
   int right_min = get_year_min(node->right);
 
-  if (left_min < min_year)
+  if (left_min < min_year && left_min > 0)
   {
     min_year = left_min;
   }
-  if (right_min < min_year)
+  if (right_min < min_year && right_min > 0)
   {
     min_year = right_min;
   }
