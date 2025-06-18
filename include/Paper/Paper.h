@@ -41,6 +41,9 @@ void print_paper_citations(void *data);
 // Fungsi membangun BSTree dari array Paper tanpa balancing
 void build_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
 
+// Fungsi membangun BSTree dari array Paper dengan balancing
+void build_balance_bstree_paper(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
+
 // Fungsi untuk membandingkan dua Paper berdasarkan judul
 int compare_paper_by_title(const void *paper1, const void *paper2);
 
@@ -58,9 +61,6 @@ void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_l
 
 // fungsi untuk mencari Paper berdasarkan nama author dengan prefix match
 void search_paper_by_author(BSTreeNode *node, const char *author_name, DLList **paper_list);
-
-// mencari 1 paper berdasarkan judul
-Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title);
 
 // Fungsi untuk mengambil data Paper yang populer berdasarkan jumlah sitasi
 // dan memasukkannya ke dalam DLList sejumlah n
