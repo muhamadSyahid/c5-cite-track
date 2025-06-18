@@ -61,7 +61,7 @@ int main(int argc, char const *argv[])
   printf("Convert Successful! ");
   end_time = clock();
   double time_taken_paper = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-  printf("Time taken to load and build BSTree: %.2f seconds\n", time_taken_paper);
+  printf("Time taken to load and build BSTree Paper: %.2f seconds\n", time_taken_paper);
 
   start_time = clock();
   // Insert papers ke BSTree authors_tree
@@ -69,7 +69,7 @@ int main(int argc, char const *argv[])
   printf("Convert Successful! ");
   end_time = clock();
   double time_taken_author = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-  printf("Time taken to load and build BSTree: %.2f seconds\n", time_taken_author);
+  printf("Time taken to load and build BSTree Author: %.2f seconds\n", time_taken_author);
 
   int choice = 0;
   char *keyword = NULL; // Untuk menyimpan keyword pencarian
