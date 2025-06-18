@@ -62,9 +62,6 @@ void search_paper_by_title(BSTreeNode *node, const char *title, DLList **paper_l
 // fungsi untuk mencari Paper berdasarkan nama author dengan prefix match
 void search_paper_by_author(BSTreeNode *node, const char *author_name, DLList **paper_list);
 
-// mencari 1 paper berdasarkan judul
-Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title);
-
 // Fungsi untuk mengambil data Paper yang populer berdasarkan jumlah sitasi
 // dan memasukkannya ke dalam DLList sejumlah n
 void get_popular_papers(Paper **paper_array, int n_papers, DLList **output_paper_list, int n_top_papers);

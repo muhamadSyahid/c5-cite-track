@@ -302,31 +302,6 @@ void search_paper_by_author(BSTreeNode *node, const char *author_name, DLList **
   search_paper_by_author(node->right, author_name, paper_list);
 }
 
-Paper *search_exact_paper_by_title(BSTreeNode *node, const char *title)
-{
-  if (node == NULL)
-  {
-    return NULL;
-  }
-
-  Paper *paper = (Paper *)node->info;
-
-  int compare = compare_paper_by_title(title, paper->title);
-
-  if (compare == 0)
-  {
-    return paper;
-  }
-  else if (compare < 0)
-  {
-    return search_exact_paper_by_title(node->left, title);
-  }
-  else
-  {
-    return search_exact_paper_by_title(node->right, title);
-  }
-}
-
 static int qsort_compare_paper_by_incitations_desc(const void *a, const void *b)
 {
   Paper *paper_a = *(Paper **)a;

@@ -28,30 +28,6 @@ void print_author(void *data)
     }
 }
 
-void search_array_paper_by_author(Paper **paper, int n_papers, const char *author, DLList **paper_list)
-{
-    if (paper == NULL || author == NULL || paper_list == NULL)
-    {
-        return;
-    }
-
-    if (*paper_list == NULL)
-    {
-        *paper_list = dllist_create();
-    }
-
-    for (int i = 0; i < n_papers; i++)
-    {
-        for (int j = 0; j < paper[i]->author_count; j++)
-        {
-            if (strcmp(paper[i]->authors[j], author) == 0)
-            {
-                dllist_insert_back(paper_list, paper[i]);
-            }
-        }
-    }
-}
-
 void build_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *))
 {
     if (*tree == NULL)

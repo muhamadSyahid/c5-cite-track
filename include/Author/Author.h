@@ -29,9 +29,6 @@ typedef struct
 
 void print_author(void *data);
 
-// mengambil daftar paper dari array papers dan disimpan di papers_list
-void search_array_paper_by_author(Paper **paper, int n_papers, const char *author, DLList **paper_list);
-
 // fungsi membangun BSTree author dari array Paper tanpa balancing
 void build_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compare)(const void *, const void *));
 
