@@ -80,30 +80,42 @@ void build_bstree_author(BSTree **tree, Paper **paper, int n_papers, int (*compa
         }
         for (int j = 0; j < paper[i]->author_count; j++)
         {
-            if (!is_author_exist((*tree)->root, paper[i]->authors[j]))
+            const char *author_name = paper[i]->authors[j];
+
+            Author *existing_author = find_author((*tree)->root, author_name);
+            if (existing_author != NULL)
             {
+                dllist_insert_back(&existing_author->papers, paper[i]);
+            }
+            else {
+
                 Author *new_author = malloc(sizeof(Author));
-                DLList *new_author_papers = dllist_create();
+                if (new_author == NULL)
+                {
+                    continue;
+                }
 
-                new_author->name = malloc(strlen(paper[i]->authors[j]) * sizeof(char) + 1);
+                new_author->name = malloc(strlen(author_name) + 1);
+                if (new_author->name == NULL)
+                {
+                    free(new_author);
+                    continue;
+                }
 
-                strcpy(new_author->name, paper[i]->authors[j]);
+                strcpy(new_author->name, author_name);
 
-                // cari papers berdasarkan penulis, masukkan paper ke dalam DLList
-                search_array_paper_by_author(paper, n_papers, new_author->name, &new_author_papers);
+                new_author->papers = dllist_create();
 
                 // Urutkan daftar paper berdasarkan in_citation_count secara descending
-                dllist_sort_dsc(&new_author_papers, compare_paper_by_incitations_desc);
-
-                new_author->papers = new_author_papers;
-
+                dllist_insert_back(&new_author->papers, paper[i]);
+                
                 bstree_insert(*tree, new_author, compare);
             }
         }
     }
 }
 
-bool is_author_exist(BSTreeNode *node, const char *author)
+Author* find_author(BSTreeNode *node, const char *author)
 {
     if (node == NULL)
     {
@@ -121,15 +133,15 @@ bool is_author_exist(BSTreeNode *node, const char *author)
 
     if (cmp == 0) // Jika cocok persis
     {
-        return true;
+        return a;
     }
     else if (cmp < 0) // Jika author yang dicari lebih kecil, cek subtree kiri
     {
-        return is_author_exist(node->left, author);
+        return find_author(node->left, author);
     }
     else // Jika author yang dicari lebih besar, cek subtree kanan
     {
-        return is_author_exist(node->right, author);
+        return find_author(node->right, author);
     }
 }
 

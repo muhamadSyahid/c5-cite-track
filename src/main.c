@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "Author/Author.h"
 #include "Paper/Paper.h"
@@ -23,6 +24,8 @@ DLList *shown_author_list = NULL;
 // Array of Paper pointers untuk menyimpan data Paper sementara
 // yang diambil dari file dataset
 Paper **papers = NULL;
+
+clock_t start_time, end_time;
 // jumlah `papers`
 int n_papers = 0;
 
@@ -41,22 +44,32 @@ void display_menu_and_stats();
 int main(int argc, char const *argv[])
 {
   load_json_papers(&papers, &n_papers, "data/s2orc_small_part_2.json");
-
+  
   papers_tree = bstree_create();
   authors_tree = bstree_create();
   shown_paper_list = dllist_create();
   shown_author_list = dllist_create();
-
-  if (n_papers > 8000) {
-    printf("Limiting dataset to 8000 papers for testing\n");
-    n_papers = 8000;
-  }
-
+  
+  // if (n_papers > 8000) {
+  //   printf("Limiting dataset to 8000 papers for testing\n");
+  //   n_papers = 8000;
+  // }
+  
+  start_time = clock();
   // Insert papers ke BSTree papers_tree
-  build_balance_bstree_paper(&papers_tree, papers, n_papers, compare_paper_by_title);
+  build_bstree_paper(&papers_tree, papers, n_papers, compare_paper_by_title);
+  printf("Convert Successful! ");
+  end_time = clock();
+  double time_taken_paper = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+  printf("Time taken to load and build BSTree: %.2f seconds\n", time_taken_paper);
 
+  start_time = clock();
   // Insert papers ke BSTree authors_tree
   build_bstree_author(&authors_tree, papers, n_papers, compare_author_name);
+  printf("Convert Successful! ");
+  end_time = clock();
+  double time_taken_author = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+  printf("Time taken to load and build BSTree: %.2f seconds\n", time_taken_author);
 
   int choice = 0;
   char *keyword = NULL; // Untuk menyimpan keyword pencarian
