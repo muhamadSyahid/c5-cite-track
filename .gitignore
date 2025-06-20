@@ -42,3 +42,8 @@ dkms.conf
 
 .vscode
 build
+build_old
+build_new
+
+data/
+!data/test.json
