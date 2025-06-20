@@ -44,7 +44,16 @@ clock_t start_time, end_time;
 
 int main(int argc, char const *argv[])
 {
+  printf("Loading dataset, please wait...\n");
+
+  start_time = clock();
+
   load_json_papers(&papers, &n_papers, "data/test.json");
+  // load_json_papers(&papers, &n_papers, "data/s2orc_small.json");
+
+  end_time = clock();
+  double time_taken_parse = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+  printf("Time taken to load and parse data: %f seconds\n", time_taken_parse);
 
   papers_tree = bstree_create();
   authors_tree = bstree_create();
