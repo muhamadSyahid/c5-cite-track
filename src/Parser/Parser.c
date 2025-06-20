@@ -120,9 +120,9 @@ Paper *get_paper_from_json(const char *json_str)
   char *title = cJSON_GetStringValue(title_json);
   char *paper_abstract = cJSON_GetStringValue(abstract_json);
 
-  paper->id = malloc(1 + (strlen(id) * sizeof(char)));
-  paper->title = malloc(1 + (strlen(title) * sizeof(char)));
-  paper->paper_abstract = malloc(1 + (strlen(paper_abstract) * sizeof(char)));
+  paper->id = malloc((1 + strlen(id)) * sizeof(char));
+  paper->title = malloc((1 + strlen(title)) * sizeof(char));
+  paper->paper_abstract = malloc((1 + strlen(paper_abstract)) * sizeof(char));
 
   strncpy(paper->id, id, strlen(id));
   strncpy(paper->title, title, strlen(title));
@@ -152,7 +152,7 @@ Paper *get_paper_from_json(const char *json_str)
     cJSON *author_json = cJSON_GetArrayItem(authors_json, i);
     cJSON *author_name_json = cJSON_GetObjectItemCaseSensitive(author_json, "name");
     char *author_name = cJSON_GetStringValue(author_name_json);
-    paper->authors[i] = malloc(1 + (strlen(author_name) * sizeof(char)));
+    paper->authors[i] = malloc((1 + strlen(author_name)) * sizeof(char));
 
     strncpy(paper->authors[i], author_name, strlen(author_name));
   }
@@ -161,7 +161,7 @@ Paper *get_paper_from_json(const char *json_str)
   {
     cJSON *in_citation_json = cJSON_GetArrayItem(in_citations_json, i);
     char *in_citation = cJSON_GetStringValue(in_citation_json);
-    paper->in_citations[i] = malloc(1 + (strlen(in_citation) * sizeof(char)));
+    paper->in_citations[i] = malloc((1 + strlen(in_citation)) * sizeof(char));
 
     strncpy(paper->in_citations[i], in_citation, strlen(in_citation));
   }
@@ -170,7 +170,7 @@ Paper *get_paper_from_json(const char *json_str)
   {
     cJSON *out_citation_json = cJSON_GetArrayItem(out_citations_json, i);
     char *out_citation = cJSON_GetStringValue(out_citation_json);
-    paper->out_citations[i] = malloc(1 + (strlen(out_citation) * sizeof(char)));
+    paper->out_citations[i] = malloc((1 + strlen(out_citation)) * sizeof(char));
 
     strncpy(paper->out_citations[i], out_citation, strlen(out_citation));
   }
